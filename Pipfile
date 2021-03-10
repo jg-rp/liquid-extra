@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+python-liquid = {editable = true, path = "./../liquipy2"}
+
+[dev-packages]
+black = "*"
+pylint = "*"
+flake8 = "*"
+coverage = "*"
+rstcheck = "*"
+docutils = "*"
+flake8-bugbear = "*"
+twine = "*"
+ipython = "*"
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
