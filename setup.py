@@ -10,7 +10,7 @@ setuptools.setup(
     description="Extra tags an filters for python-liquid.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    url="https://github.com/jg-rp/python-liquid-extra",
+    url="https://github.com/jg-rp/liquid-extra",
     packages=setuptools.find_packages(exclude=["tests*"]),
     include_package_data=True,
     zip_safe=False,
