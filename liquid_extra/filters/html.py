@@ -1,3 +1,8 @@
+import html
+
+from liquid import Markup
+from liquid import escape
+
 from liquid.filter import Filter
 from liquid.filter import string_required
 from liquid.filter import no_args
@@ -11,7 +16,10 @@ class StylesheetTag(Filter):
     @string_required
     @no_args
     def __call__(self, url):
-        return f'<link href="{url}" rel="stylesheet" type="text/css" media="all" />'
+        tag = '<link href="{}" rel="stylesheet" type="text/css" media="all" />'
+        if self.env.autoescape:
+            return Markup(tag).format(escape(str(url)))
+        return tag.format(html.escape(url))
 
 
 class ScriptTag(Filter):
@@ -22,4 +30,7 @@ class ScriptTag(Filter):
     @string_required
     @no_args
     def __call__(self, url):
-        return f'<script src="{url}" type="text/javascript"></script>'
+        tag = '<script src="{}" type="text/javascript"></script>'
+        if self.env.autoescape:
+            return Markup(tag).format(escape(str(url)))
+        return tag.format(html.escape(url))
