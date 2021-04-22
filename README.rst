@@ -3,6 +3,19 @@ Liquid Extra
 
 A growing collection of extra tags and filters for `Python Liquid <https://github.com/jg-rp/liquid>`_.
 
+.. image:: https://img.shields.io/pypi/v/python-liquid-extra.svg
+    :target: https://pypi.org/project/python-liquid-extra/
+    :alt: Version
+
+.. image:: https://img.shields.io/pypi/l/python-liquid-extra.svg
+    :target: https://pypi.org/project/python-liquid-extra/
+    :alt: Licence
+
+.. image:: https://img.shields.io/pypi/pyversions/python-liquid-extra.svg
+    :target: https://pypi.org/project/python-liquid-extra/
+    :alt: Python versions
+
+
 - `Installing`_
 - `Usage`_
 - `Extra Tags`_
