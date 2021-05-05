@@ -18,14 +18,18 @@ A growing collection of extra tags and filters for `Python Liquid <https://githu
 
 - `Installing`_
 - `Usage`_
-- `Extra Tags`_
-    - `if (not)`_
-- `Extra Filters`_
-    - `index`_
-    - `json`_
-    - `stylesheet_tag`_
-    - `script_tag`_
-    - `t (translate)`_
+  
+Extra Tags
+
+- `if (not)`_
+
+Extra Filters
+
+- `index`_
+- `json`_
+- `stylesheet_tag`_
+- `script_tag`_
+- `t (translate)`_
 
 Installing
 ++++++++++
@@ -36,38 +40,36 @@ Install and update using `pip <https://pip.pypa.io/en/stable/quickstart/>`_:
 
     $ python -m pip install -U python-liquid-extra
 
-Liquid requires Python>=3.7 or PyPy3.7.
 
 Usage
 +++++
 
-All filters and tags built-in to Liquid are registered automatically when you create a new 
-``Environment``. If you register a new tag or filter with the same name as a built-in one,
-the built-in tag or filter will be replaced without warning.
+All filters and tags built-in to Liquid are registered automatically when you create a
+new ``Environment``. If you register a new tag or filter with the same name as a
+built-in one, the built-in tag or filter will be replaced without warning.
 
 Filters
 -------
 
-Register a filter by calling the ``add_filter`` method of a ``liquid.Environment``.
+Register a filter by calling the ``add_filter`` method of a ``liquid.Environment``. 
+``add_filter`` takes two arguments. The first is the filter's name. This is what you'll
+use to apply the filter to an expression in a liquid template. The second is any
+callable that accepts at least one argument, the result of the left hand side of the
+expression the filter is applied to.
 
-    ``add_filter(name: str, fltr: Callable[..., Any]) -> None:``
+.. code-block:: text
 
-    :name:
-        The filter's name. Does not need to match the function or class name. This
-        is what you'll use to apply the filter to an expression in a liquid template.
-    :fltr:
-        Any callable that accepts at least one argument, the result of the left hand
-        side of the expression the filter is applied to.
+    add_filter(name: str, filter_: Callable[..., Any]) -> None
 
 For example
 
 .. code-block:: python
 
     from liquid import Environment
-    from liquid_extra.filters import JSON
+    from liquid_extra import filters
 
     env = Environment()
-    env.add_filter(JSON.name, JSON(env))
+    env.add_filter("json", filters.JSON())
 
 Or, if you're using `Flask-Liquid <https://github.com/jg-rp/Flask-Liquid>`_.
 
@@ -79,21 +81,52 @@ Or, if you're using `Flask-Liquid <https://github.com/jg-rp/Flask-Liquid>`_.
     from flask_liquid import Liquid
     from flask_liquid import render_template
 
-    from liquid_extra.filters import JSON
+    from liquid_extra import filters
 
     app = Flask(__name__)
 
     liquid = Liquid(app)
-    liquid.env.add_filter(JSON.name, JSON(liquid.env))
+    liquid.env.add_filter("json", filters.JSON())
 
     @app.route("/hello/")
     @app.route("/hello/<name>")
     def index(name=None):
         return render_template("index.html", name=name)
 
-Some filters take additional constructor arguments, some optional and some mandatory.
-Refer to the documentation for each filter below to see what, if any, additional
-arguments they support.
+Equivalently, using `django-liquid <https://github.com/jg-rp/django-liquid>`_, if the
+following is saved as ``myproject/liquid.py``
+
+.. code-block:: python
+
+    from liquid import Environment
+    from liquid_extra import filters
+    
+    def environment(**options):
+        env = Environment(**options)
+        env.add_filter("json", filters.JSON())
+        # Register more filters or tags here.
+
+Then tell the django template backend to use your environment factory function in your
+project's ``settings.py`` file.
+
+.. code-block:: python
+
+  TEMPLATES = [
+      {
+          'BACKEND': 'django_liquid.liquid.Liquid',
+          'DIRS': [],
+          'APP_DIRS': True,
+          'OPTIONS': {
+            'environment': 'myproject.liquid.environment'
+          },
+      },
+  ]
+
+
+Filters can be implemented as simple functions, classes with a ``__call__`` method or
+closures that return a function or callable object. The latter two could take additional
+arguments, some optional and some mandatory. Refer to the documentation for each filter
+below to see what, if any, additional arguments they support.
 
 Tags
 ----
@@ -101,9 +134,10 @@ Tags
 Register a tag by calling the ``add_tag`` method of a ``liquid.Environment``. Note that 
 ``add_tag`` expects the tag class, not an instance of it.
 
-    ``add_tag(self, tag: Type[Tag]) -> None:``
+.. code-block:: text
 
-    :tag: A subclass of ``liquid.tag.Tag``
+    add_tag(self, tag: Type[liquid.tag.Tag]) -> None
+
 
 For example
 
@@ -223,10 +257,10 @@ Return the first zero-based index of an item in an array. Or None if the item is
 .. code-block:: python
 
     from liquid import Environment
-    from liquid_extra.filters import Index
+    from liquid_extra import filters
 
     env = Environment()
-    env.add_filter(Index.name, Index(env))
+    env.add_filter("index", filters.index)
 
     template = env.from_string("{{ colours | index 'blue' }}")
 
@@ -249,10 +283,10 @@ supporting ``dict``, ``list``, ``tuple``, ``str``, ``int``, ``float``, some Enum
 .. code-block:: python
 
     from liquid import Environment
-    from liquid_extra.filters import JSON
+    from liquid_extra import filters
 
     env = Environment()
-    env.add_filter(JSON.name, JSON(env))
+    env.add_filter("json", filters.JSON())
 
     template = env.from_string("""
         <script type="application/json">
@@ -277,8 +311,8 @@ supporting ``dict``, ``list``, ``tuple``, ``str``, ``int``, ``float``, some Enum
     </script>
 
 
-The ``JSON`` constructor takes an optional ``default`` argument. ``default`` will be
-passed to ``json.dumps`` and should be a function that gets called for objects that can’t
+The ``JSON`` filter takes an optional ``default`` argument. ``default`` will be passed
+to ``json.dumps`` and should be a function that gets called for objects that can’t
 otherwise be serialized. For example, this default function adds support for serializing 
 `data classes <https://docs.python.org/3/library/dataclasses.html>`_.
 
@@ -289,7 +323,7 @@ otherwise be serialized. For example, this default function adds support for ser
     from dataclasses import is_dataclass
 
     from liquid import Environment
-    from liquid_extra.filters import JSON
+    from liquid_extra import filters
 
     env = Environment()
 
@@ -297,7 +331,7 @@ otherwise be serialized. For example, this default function adds support for ser
         if is_dataclass(obj):
             return asdict(obj)
 
-    env.add_filter(JSON.name, JSON(env, default=default))
+    env.add_filter("json", filters.JSON(default=default))
 
     template = env.from_string("""
         <script type="application/json">
@@ -321,10 +355,10 @@ Wrap a URL in an HTML stylesheet tag.
 .. code-block:: python
 
     from liquid import Environment
-    from liquid_extra.filters import StylesheetTag
+    from liquid_extra import filters
 
     env = Environment()
-    env.add_filter(StylesheetTag.name, StylesheetTag(env))
+    env.add_filter("stylesheet_tag", filters.stylesheet_tag)
 
     template = env.from_string("{{ url | stylesheet_tag }}")
 
@@ -348,10 +382,10 @@ Wrap a URL in an HTML script tag.
 .. code-block:: python
 
     from liquid import Environment
-    from liquid_extra.filters import ScriptTag
+    from liquid_extra import filters
 
     env = Environment()
-    env.add_filter(ScriptTag.name, ScriptTag(env))
+    env.add_filter("script_tag", filters.script_tag)
 
     template = env.from_string("{{ url | script_tag }}")
 
@@ -411,7 +445,7 @@ render time.
     }
 
     env = Environment()
-    env.add_filter(Translate.name, Translate(env, locales=some_locales))
+    env.add_filter(Translate.name, Translate(locales=some_locales))
 
     template = env.from_string("{{ 'layout.greeting' | t: name: user.name }}")
 
@@ -422,8 +456,8 @@ render time.
     print(template.render(locale="de", user={"name": "Welt"}))  # -> "Hallo Welt"
 
 
-Notice that the ``t`` filter accepts arbitrary named parameters. Named parameters can be used
-to substitute fields in translation strings with values from the template context.
+Notice that the ``t`` filter accepts arbitrary named parameters. Named parameters can be
+used to substitute fields in translation strings with values from the template context.
 
 It you don't give ``Translate`` any locales or you leave it empty, you'll always get the
 translation key back unchanged.

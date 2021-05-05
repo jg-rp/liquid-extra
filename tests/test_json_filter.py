@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from dataclasses import is_dataclass
 from dataclasses import asdict
 
+from liquid.exceptions import FilterArgumentError
+
 from liquid_extra.filters import JSON
 
 from .base import FilterTestCase
@@ -47,11 +49,11 @@ class JSONFilterTestCase(FilterTestCase):
                 val={"foo": MockData(3, 4)},
                 args=[],
                 kwargs={},
-                expect=TypeError,
+                expect=FilterArgumentError,
             ),
         ]
 
-        self.env.add_filter(JSON.name, JSON(self.env))
+        self.env.add_filter(JSON.name, JSON())
         self._test(self.ctx.filter(JSON.name), test_cases)
 
     def test_json_with_encoder_func(self):
@@ -69,7 +71,7 @@ class JSONFilterTestCase(FilterTestCase):
             if is_dataclass(obj):
                 return asdict(obj)
 
-        self.env.add_filter(JSON.name, JSON(self.env, default=default))
+        self.env.add_filter(JSON.name, JSON(default=default))
         self._test(self.ctx.filter(JSON.name), test_cases)
 
 
@@ -94,7 +96,7 @@ class RenderJSONFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        self._test(JSON(self.env), test_cases)
+        self._test(JSON(), test_cases)
 
     def test_render_json_with_encoder_func(self):
         test_cases = [
@@ -111,4 +113,4 @@ class RenderJSONFilterTestCase(RenderFilterTestCase):
             if is_dataclass(obj):
                 return asdict(obj)
 
-        self._test(JSON(self.env, default=default), test_cases)
+        self._test(JSON(default=default), test_cases)

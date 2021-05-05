@@ -1,6 +1,14 @@
 Liquid Extra Change Log
 ========================
 
+Version 0.3.0
+-------------
+
+- Depreciated filters that inherit from ``liquid.filter.Filter``. That's
+  ``StylesheetTag``, ``ScriptTag`` and ``Index``. Use the function-based implementations
+  instead (``stylesheet_tag``, ``script_tag`` and ``index``).
+- Depreciated the ``env`` argument to ``filters.JSON`` and ``filters.Translate``.
+
 Version 0.2.0
 -------------
 

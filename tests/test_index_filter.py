@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+from liquid import Environment
+from liquid.loaders import DictLoader
+
+from liquid_extra.filters import index
 from liquid_extra.filters import Index
 
 from .base import FilterTestCase
@@ -46,8 +50,14 @@ class IndexFilterTestCase(FilterTestCase):
             ),
         ]
 
-        self.env.add_filter(Index.name, Index(self.env))
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            self.env.add_filter(Index.name, Index(self.env))
         self._test(self.ctx.filter(Index.name), test_cases)
+
+        # Test new style filter implementation
+        self.env.add_filter("index", index)
+        self._test(self.ctx.filter("index"), test_cases)
 
 
 class RenderIndexFilterTestCase(RenderFilterTestCase):
@@ -71,4 +81,17 @@ class RenderIndexFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        self._test(Index(self.env), test_cases)
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            self._test(Index(self.env), test_cases)
+
+        # Test new style filter implementation
+        for case in test_cases:
+            env = Environment()
+            env.add_filter("index", index)
+            env.loader = DictLoader(case.partials)
+            template = env.from_string(case.template, globals=case.globals)
+
+            with self.subTest(msg=case.description):
+                result = template.render()
+                self.assertEqual(result, case.expect)

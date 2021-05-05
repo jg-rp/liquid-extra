@@ -13,7 +13,6 @@ from typing import Mapping
 from liquid.environment import Environment
 
 from liquid import Context
-from liquid.filter import Filter
 from liquid.loaders import DictLoader
 
 
@@ -30,7 +29,7 @@ class RenderCase(NamedTuple):
     template: str
     expect: str
     globals: Mapping[str, Any]
-    partials: Mapping[str, Any]
+    partials: Dict[str, Any]
 
 
 class FilterTestCase(unittest.TestCase):
@@ -38,15 +37,15 @@ class FilterTestCase(unittest.TestCase):
         self.env = Environment()
         self.ctx = Context(self.env)
 
-    def _test(self, fltr: Callable, test_cases: Iterable[Case]):
+    def _test(self, filter_: Callable, test_cases: Iterable[Case]):
         for case in test_cases:
             with self.subTest(msg=case.description):
                 if isclass(case.expect) and issubclass(case.expect, Exception):
                     with self.assertRaises(case.expect):
-                        fltr(case.val, *case.args, **case.kwargs)
+                        filter_(case.val, *case.args, **case.kwargs)
                 else:
                     self.assertEqual(
-                        fltr(case.val, *case.args, **case.kwargs), case.expect
+                        filter_(case.val, *case.args, **case.kwargs), case.expect
                     )
 
 
@@ -54,10 +53,10 @@ class RenderFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.env = Environment()
 
-    def _test(self, fltr: Filter, test_cases: Iterable[RenderCase]):
+    def _test(self, filter_: Callable[..., Any], test_cases: Iterable[RenderCase]):
         for case in test_cases:
             self.env.loader = DictLoader(case.partials)
-            self.env.add_filter(fltr.name, fltr)
+            self.env.add_filter(filter_.name, filter_)
 
             template = self.env.from_string(case.template, globals=case.globals)
 

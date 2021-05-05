@@ -71,7 +71,7 @@ class TranslateFilterTestCase(FilterTestCase):
             ),
         ]
 
-        self.env.add_filter(Translate.name, Translate(self.env, locales=mock_locales))
+        self.env.add_filter(Translate.name, Translate(locales=mock_locales))
         self._test(self.ctx.filter(Translate.name), test_cases)
 
     def test_translate_filter_with_locale(self):
@@ -106,7 +106,7 @@ class TranslateFilterTestCase(FilterTestCase):
             ),
         ]
 
-        self.env.add_filter(Translate.name, Translate(self.env, locales=mock_locales))
+        self.env.add_filter(Translate.name, Translate(locales=mock_locales))
         self.ctx.assign("locale", "de")
         self._test(self.ctx.filter(Translate.name), test_cases)
 
@@ -153,4 +153,4 @@ class RenderTranslateFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        self._test(Translate(self.env, locales=mock_locales), test_cases)
+        self._test(Translate(locales=mock_locales), test_cases)

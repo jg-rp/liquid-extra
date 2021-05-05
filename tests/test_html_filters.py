@@ -6,8 +6,12 @@ except ImportError:
     markupsafe = None
 
 from liquid import Environment
+from liquid.loaders import DictLoader
 from liquid import Markup
 from liquid.exceptions import FilterArgumentError
+
+from liquid_extra.filters import stylesheet_tag
+from liquid_extra.filters import script_tag
 
 from liquid_extra.filters import StylesheetTag
 from liquid_extra.filters import ScriptTag
@@ -53,8 +57,14 @@ class StylesheetTagFilterTestCase(FilterTestCase):
             ),
         ]
 
-        self.env.add_filter(StylesheetTag.name, StylesheetTag(self.env))
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            self.env.add_filter(StylesheetTag.name, StylesheetTag(self.env))
         self._test(self.ctx.filter(StylesheetTag.name), test_cases)
+
+        # Test new style filter implementation
+        self.env.add_filter("stylesheet_tag", stylesheet_tag)
+        self._test(self.ctx.filter("stylesheet_tag"), test_cases)
 
 
 class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
@@ -71,7 +81,20 @@ class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        self._test(StylesheetTag(self.env), test_cases)
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            self._test(StylesheetTag(self.env), test_cases)
+
+        # Test new style filter implementation
+        for case in test_cases:
+            env = Environment()
+            env.add_filter("stylesheet_tag", stylesheet_tag)
+            env.loader = DictLoader(case.partials)
+            template = env.from_string(case.template, globals=case.globals)
+
+            with self.subTest(msg=case.description):
+                result = template.render()
+                self.assertEqual(result, case.expect)
 
     @skipIf(markupsafe is None, "this test requires markupsafe")
     def test_render_stylesheet_tag_with_autoescape(self):
@@ -100,7 +123,20 @@ class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
         ]
 
         env = Environment(autoescape=True)
-        env.add_filter(StylesheetTag.name, StylesheetTag(env))
+
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            env.add_filter(StylesheetTag.name, StylesheetTag(env))
+
+        for case in test_cases:
+            template = env.from_string(case.template, globals=case.globals)
+
+            with self.subTest(msg=case.description):
+                result = template.render()
+                self.assertEqual(result, case.expect)
+
+        # Test new style filter implementation
+        self.env.add_filter("stylesheet_tag", stylesheet_tag)
 
         for case in test_cases:
             template = env.from_string(case.template, globals=case.globals)
@@ -138,8 +174,14 @@ class ScriptTagFilterTestCase(FilterTestCase):
             ),
         ]
 
-        self.env.add_filter(ScriptTag.name, ScriptTag(self.env))
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            self.env.add_filter(ScriptTag.name, ScriptTag(self.env))
         self._test(self.ctx.filter(ScriptTag.name), test_cases)
+
+        # Test new style filter implementation
+        self.env.add_filter("script_tag", script_tag)
+        self._test(self.ctx.filter("script_tag"), test_cases)
 
 
 class RenderScriptTagFilterTestCase(RenderFilterTestCase):
@@ -156,7 +198,20 @@ class RenderScriptTagFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        self._test(ScriptTag(self.env), test_cases)
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            self._test(ScriptTag(self.env), test_cases)
+
+        # Test new style filter implementation
+        for case in test_cases:
+            env = Environment()
+            env.add_filter("script_tag", script_tag)
+            env.loader = DictLoader(case.partials)
+            template = env.from_string(case.template, globals=case.globals)
+
+            with self.subTest(msg=case.description):
+                result = template.render()
+                self.assertEqual(result, case.expect)
 
     @skipIf(markupsafe is None, "this test requires markupsafe")
     def test_render_script_tag_with_autoescape(self):
@@ -185,7 +240,20 @@ class RenderScriptTagFilterTestCase(RenderFilterTestCase):
         ]
 
         env = Environment(autoescape=True)
-        env.add_filter(ScriptTag.name, ScriptTag(env))
+
+        # Test depreciated class-based filter implementation
+        with self.assertWarns(DeprecationWarning):
+            env.add_filter(ScriptTag.name, ScriptTag(env))
+
+        for case in test_cases:
+            template = env.from_string(case.template, globals=case.globals)
+
+            with self.subTest(msg=case.description):
+                result = template.render()
+                self.assertEqual(result, case.expect)
+
+        # Test new style filter implementation
+        self.env.add_filter("script_tag", script_tag)
 
         for case in test_cases:
             template = env.from_string(case.template, globals=case.globals)

@@ -1,11 +1,14 @@
 import json
+import warnings
 
 from liquid.context import get_item
-from liquid.filter import Filter
-from liquid.filter import no_args
+
+from liquid.filter import liquid_filter
+from liquid.filter import with_context
+from liquid.filter import with_environment
 
 
-class JSON(Filter):
+class JSON:
     """Serialize objects as a JSON (JavaScript Object Notation) formatted string.
 
     Args:
@@ -15,16 +18,25 @@ class JSON(Filter):
 
     name = "json"
 
-    def __init__(self, env, default=None):
-        super().__init__(env)
+    def __init__(self, env=None, default=None):
+        if env is not None:
+            warnings.warn(
+                "the `env` argument to `JSON` is depreciated and will be removed in a "
+                "future release.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
         self.default = default
 
-    @no_args
+    @liquid_filter
     def __call__(self, obj):
         return json.dumps(obj, default=self.default)
 
 
-class Translate(Filter):
+@with_context
+@with_environment
+class Translate:
     """Replace translation keys with strings for the current locale.
 
     Tries to read the locale from the current template context, falling back to
@@ -36,13 +48,20 @@ class Translate(Filter):
     """
 
     name = "t"
-    with_context = True
 
-    def __init__(self, env, locales=None):
-        super().__init__(env)
+    def __init__(self, env=None, locales=None):
+        if env is not None:
+            warnings.warn(
+                "the `env` argument to `Translate` is depreciated and will be removed "
+                "in a future release.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
         self.locales = locales or {}
 
-    def __call__(self, key, *, context, **kwargs):
+    @liquid_filter
+    def __call__(self, key, *, context, environment, **kwargs):
         locale = context.resolve("locale", default="default")
         translations = self.locales.get(locale, {})
 
@@ -50,4 +69,4 @@ class Translate(Filter):
         path = key.split(".")
 
         val = get_item(translations, *path, default=key)
-        return self.env.from_string(val).render(**kwargs)
+        return environment.from_string(val).render(**kwargs)
