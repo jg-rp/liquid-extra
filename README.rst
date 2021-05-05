@@ -105,6 +105,7 @@ following is saved as ``myproject/liquid.py``
         env = Environment(**options)
         env.add_filter("json", filters.JSON())
         # Register more filters or tags here.
+        return env
 
 Then tell the django template backend to use your environment factory function in your
 project's ``settings.py`` file.
