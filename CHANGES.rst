@@ -1,6 +1,12 @@
 Liquid Extra Change Log
 ========================
 
+Version 0.3.1
+-------------
+
+- Fixed a bug where ``if not foo contains 'bar'`` would raise a ``LiquidTypeError``. It
+  is now equivalent to ``if not (foo contains 'bar')``.
+
 Version 0.3.0
 -------------
 

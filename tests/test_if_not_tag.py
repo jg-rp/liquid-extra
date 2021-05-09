@@ -975,6 +975,48 @@ class BooleanRenderTestCases(TestCase):
                 template=r"{% if not '' == empty %}foo{% endif %}",
                 expect="",
             ),
+            RenderCase(
+                description="not contains",
+                template=r"{% if not foo contains 'z' %}bar{% endif %}",
+                expect="bar",
+                globals={"foo": ["a", "b", "c"]},
+            ),
+            RenderCase(
+                description="and not",
+                template=r"{% if not foo and not bar %}hello{% endif %}",
+                expect="hello",
+                globals={"foo": False, "bar": False},
+            ),
+            RenderCase(
+                description="true and not",
+                template=r"{% if foo and not bar %}hello{% endif %}",
+                expect="hello",
+                globals={"foo": True, "bar": False},
+            ),
+            RenderCase(
+                description="not equals",
+                template=r"{% if not foo == True %}hello{% endif %}",
+                expect="hello",
+                globals={"foo": False},
+            ),
+            RenderCase(
+                description="not not equals False",
+                template=r"{% if not foo != true %}hello{% endif %}",
+                expect="",
+                globals={"foo": False},
+            ),
+            RenderCase(
+                description="not not equals true",
+                template=r"{% if not foo != true %}hello{% endif %}",
+                expect="hello",
+                globals={"foo": True},
+            ),
+            RenderCase(
+                description="not contains with parens",
+                template=r"{% if not (foo contains 'z') %}bar{% endif %}",
+                expect="bar",
+                globals={"foo": ["a", "b", "c"]},
+            ),
         ]
 
         self._test(test_cases)

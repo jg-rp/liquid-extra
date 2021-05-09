@@ -102,7 +102,7 @@ class NotExpressionParser(ExpressionParser):
 
         exp = NotPrefixExpression(
             tok.value,
-            right=self.parse_expression(stream, precedence=Precedence.PREFIX),
+            right=self.parse_expression(stream, precedence=Precedence.LOGICALRIGHT),
         )
 
         return exp
