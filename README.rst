@@ -22,6 +22,7 @@ A growing collection of extra tags and filters for `Python Liquid <https://githu
 Extra Tags
 
 - `if (not)`_
+- `macro / call`_
 
 Extra Filters
 
@@ -246,6 +247,81 @@ or true)``, evaluating to ``true``.
 This implementation of ``if`` maintains that right associativity so that any standard ``if``
 expression will behave the same, with or without non-standard ``if``. Only when ``not`` or
 parentheses are used will behavior deviate from the standard.
+
+macro / call
+------------
+
+Define parameterized Liquid snippets using the ``macro`` tag and call them using the
+``call`` tag. Macros are intended to make code reuse easier, especially for small Liquid
+snippets that are only needed within one template.
+
+``macro`` is a bit like the standard ``capture`` tag, where a block is stored on the
+render context for later use. Unlike ``capture``, ``macro`` accepts parameters,
+possibly with default values, and the block is not evaluated until it is called using
+a ``call`` tag.
+
+``call`` is a bit like ``render``, in that a new context is created including any 
+arguments supplied in the ``call`` expression. That context is then used to render the
+named macro. Unlike ``render``, ``call`` can take positional arguments and does not hit
+any template loader or the template cache.
+
+Similar to ``include`` and ``render``, ``macro`` and ``call`` take a string literal
+identifying the macro, followed by zero or more arguments. Neither ``macro`` or ``call``
+accept ``for`` or ``with``/``as`` style expressions.
+
+.. code-block:: python
+
+    from liquid import Environment
+    from liquid import StrictUndefined
+
+    from liquid_extra.tags import MacroTag
+    from liquid_extra.tags import CallTag
+
+    # Setting strict undefined is strongly recommended.
+    env = Environment(undefined=StrictUndefined)
+    env.add_tag(MacroTag)
+    env.add_tag(CallTag)
+
+    template = env.from_string("""
+        {% macro 'price', product, on_sale: false %}
+            <div class="price-wrapper">
+            {% if on_sale %}
+                <p>Was {{ product.regular_price | money }}</p>
+                <p>Now {{ product.price | money }}</p>
+            {% else %}
+                <p>{{ product.price | money }}</p>
+            {% endif %}
+            </div>
+        {% endmacro %}
+        {% call 'price', products.some_shoes, on_sale: true %}
+        {% call 'price', products.a_hat %}
+    """)
+
+    products = {
+        "some_shoes": {
+            "regular_price": 599,
+            "price": 399,
+        },
+        "a_hat": {
+            "price": 50,
+        }
+    }
+
+    print(template.render(products=products))
+
+Excess arguments passed to ``call`` are collected into ``args`` and ``kwargs``, so
+macros that handle an unknown number of arguments are possible.
+
+Note that argument defaults are bound late. Defaults are evaluated when a ``call``
+expression is evaluated, not when the macro is defined.
+
+It's not uncommon for people to use ``include`` or ``render`` to load snippets of
+Liquid in lieu of macros. It's worth noting that ..
+
+- Macros don't need to exist on a file system or in a database.
+- Macros can be defined within the template that's using them.
+- Multiple, common macros can be defined in one template and included in others when
+  needed.
 
 Extra Filters
 +++++++++++++

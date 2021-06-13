@@ -68,5 +68,5 @@ class Translate:
         key = str(key)
         path = key.split(".")
 
-        val = get_item(translations, *path, default=key)
+        val = get_item(translations, *path, default=key)  # type: ignore
         return environment.from_string(val).render(**kwargs)

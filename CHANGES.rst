@@ -1,6 +1,13 @@
 Liquid Extra Change Log
 ========================
 
+Version 0.3.2
+-------------
+
+- Added ``macro`` and ``call`` tags. Define a macro (a bit like ``capture`` but with
+  arguments) and run it with ``call`` (a bit like ``render`` but without hitting a
+  template loader).
+
 Version 0.3.1
 -------------
 
