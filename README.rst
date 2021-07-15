@@ -23,6 +23,7 @@ Extra Tags
 
 - `if (not)`_
 - `macro / call`_
+- `inline if / else (assign, echo and output statements)`_
 
 Extra Filters
 
@@ -229,9 +230,9 @@ with parentheses.
 Of course nested ``if`` and/or ``unless`` tags can be combined to work around the lack
 of ``not`` in standard Liquid, but it does not always feel natural or intuitive.
 
-Note that the ``not`` prefix operator uses Liquid `truthiness`. Only ``false`` and ``nil``
-are not truthy. Empty strings, arrays and objects all evaluate to ``true``. You can, however,
-use ``not`` in front of a comparison to ``empty`` or ``blank``.
+Note that the ``not`` prefix operator uses Liquid `truthiness`. Only ``false`` and
+``nil`` are not truthy. Empty strings, arrays and objects all evaluate to ``true``. You
+can, however, use ``not`` in front of a comparison to ``empty`` or ``blank``.
 
 .. code-block::
 
@@ -247,6 +248,83 @@ or true)``, evaluating to ``true``.
 This implementation of ``if`` maintains that right associativity so that any standard ``if``
 expression will behave the same, with or without non-standard ``if``. Only when ``not`` or
 parentheses are used will behavior deviate from the standard.
+
+inline if / else (assign, echo and output statements)
+-----------------------------------------------------
+
+Drop-in replacements for the standard output statement and ``assign`` and ``echo`` tags
+that supports inline ``if``/``else`` expressions.
+
+.. code-block:: python
+
+    from liquid import Environment
+    from liquid_extra.tags import InlineIfAssignTag
+    from liquid_extra.tags import InlineIfEchoTag
+    from liquid_extra.tags import InlineIfStatement
+
+    env = Environment()
+    env.add_tag(InlineIfAssignTag)
+    env.add_tag(InlineIfEchoTag)
+    env.add_tag(InlineIfStatement)
+
+    template = env.from_string("""
+        {{ 'hello user' if user.logged_in else 'please log in' }}
+        {% assign message = 'hello user' if user.logged_in else 'please log in' %}
+        {% echo 'hello user' if user.logged_in else 'please log in' %}
+
+        {% comment %}else defaults to `undefined` if not provided.{% endcomment %}
+        {{ 'hello user' if user.logged_in }}
+
+        {% comment %}Filters can appear after the initial object.{% endcomment %}
+        {{ 'hello user' | capitalize if user.logged_in else 'please log in' }}
+
+        {% comment %}
+            Or at the end of the expression. In which case filters will be applied even
+            if the else clause is triggered.
+        {% endcomment %}
+        {{ 'hello user' if user.logged_in else 'please log in' | url_encode }}
+
+        {% comment %}Or both{% endcomment %}
+        {{ 'hello user' | capitalize if user.logged_in else 'please log in' | url_encode }}
+
+        {% comment %}
+            The condition can be any standard boolean expression.
+        {% endcomment %}
+        {{ 'you win' if user.score > 3 else 'you loose' }}
+
+        {% comment %}
+            And objects can be any liquid literal (like the strings thus far) or
+            identifier.
+        {% endcomment %}
+        {{ user.messages[0] if user.messages else default_message }}
+    """)
+
+    user = {
+        "score": 5,
+        "messages": [],
+        "logged_in": False
+    }
+
+    print(template.render(user=user, default_message="hello"))
+    
+For some, these inline conditions will be easier to read than the standard, longer form
+``if``/``else`` tags. For example, one of the filtered statements from the (contrived)
+example above would normally be written like this.
+
+.. code-block::
+
+    {% if user.logged_in %}
+        {{ 'hello user' | capitalize | url_encode }}
+    {% else %}
+        {{ 'please log in' | url_encode }}
+    {% endif %}
+
+Note that if the condition evaluates to ``false`` (Liquid truthiness), the leading
+object is not evaluated. Equally, if the condition evaluates to ``true``, any ``else``
+object is not evaluated. This is not terribly important if the objects are Liquid
+literals or simple Python objects, but could matter if the objects are custom drops that
+do time consuming IO or processing.
+
 
 macro / call
 ------------

@@ -1,6 +1,12 @@
 Liquid Extra Change Log
 ========================
 
+Version 0.3.3
+-------------
+
+- Added drop-in replacements for standard output statements and ``echo`` and ``assign``
+  tags that support inline ``if``/``else`` expressions.
+
 Version 0.3.2
 -------------
 

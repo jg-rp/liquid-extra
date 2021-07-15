@@ -6,7 +6,7 @@ with open("README.rst", "r") as fd:
 
 setuptools.setup(
     name="python-liquid-extra",
-    version="0.3.2",
+    version="0.3.3",
     description="Extra tags an filters for python-liquid.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
@@ -14,7 +14,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["tests*"]),
     include_package_data=True,
     zip_safe=False,
-    install_requires=["python-liquid>=0.7.6"],
+    install_requires=["python-liquid>=0.8.1"],
     test_suite="tests",
     python_requires=">=3.7",
     licence="MIT",
