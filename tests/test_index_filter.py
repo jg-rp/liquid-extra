@@ -4,7 +4,6 @@ from liquid import Environment
 from liquid.loaders import DictLoader
 
 from liquid_extra.filters import index
-from liquid_extra.filters import Index
 
 from .base import FilterTestCase
 from .base import RenderFilterTestCase
@@ -50,12 +49,6 @@ class IndexFilterTestCase(FilterTestCase):
             ),
         ]
 
-        # Test depreciated class-based filter implementation
-        with self.assertWarns(DeprecationWarning):
-            self.env.add_filter(Index.name, Index(self.env))
-        self._test(self.ctx.filter(Index.name), test_cases)
-
-        # Test new style filter implementation
         self.env.add_filter("index", index)
         self._test(self.ctx.filter("index"), test_cases)
 
@@ -81,11 +74,6 @@ class RenderIndexFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        # Test depreciated class-based filter implementation
-        with self.assertWarns(DeprecationWarning):
-            self._test(Index(self.env), test_cases)
-
-        # Test new style filter implementation
         for case in test_cases:
             env = Environment()
             env.add_filter("index", index)

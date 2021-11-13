@@ -1,6 +1,11 @@
 Liquid Extra Change Log
 ========================
 
+Version 0.4.0
+-------------
+
+- Removed depreciated class-based filters.
+
 Version 0.3.3
 -------------
 
