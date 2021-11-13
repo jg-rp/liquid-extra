@@ -5,6 +5,7 @@ Version 0.4.0
 -------------
 
 - Removed depreciated class-based filters.
+- The "if not" tag now plays nicely with range literals.
 
 Version 0.3.3
 -------------

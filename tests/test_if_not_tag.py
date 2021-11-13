@@ -39,11 +39,14 @@ from liquid.token import TOKEN_LE
 from liquid.token import TOKEN_GE
 from liquid.token import TOKEN_LPAREN
 from liquid.token import TOKEN_RPAREN
+from liquid.token import TOKEN_RANGE
 
 from liquid_extra.tags.if_not import tokenize_boolean_not_expression
 from liquid_extra.tags.if_not import NotExpressionParser
 from liquid_extra.tags.if_not import NotPrefixExpression
 from liquid_extra.tags.if_not import TOKEN_NOT
+from liquid_extra.tags.if_not import TOKEN_RANGELPAREN
+
 from liquid_extra.tags import IfNotTag
 
 # XXX: A lot of these test cases are coppied from python-liquid. We do need to
@@ -218,6 +221,23 @@ class BooleanLexerTestCase(TestCase):
                     Token(1, TOKEN_FALSE, "false"),
                     Token(1, TOKEN_AND, "and"),
                     Token(1, TOKEN_FALSE, "false"),
+                    Token(1, TOKEN_RPAREN, ")"),
+                ],
+            ),
+            LexerCase(
+                "range literals",
+                "(1..3) == (1..3)",
+                [
+                    Token(1, TOKEN_RANGELPAREN, "("),
+                    Token(1, TOKEN_INTEGER, "1"),
+                    Token(1, TOKEN_RANGE, ".."),
+                    Token(1, TOKEN_INTEGER, "3"),
+                    Token(1, TOKEN_RPAREN, ")"),
+                    Token(1, TOKEN_EQ, "=="),
+                    Token(1, TOKEN_RANGELPAREN, "("),
+                    Token(1, TOKEN_INTEGER, "1"),
+                    Token(1, TOKEN_RANGE, ".."),
+                    Token(1, TOKEN_INTEGER, "3"),
                     Token(1, TOKEN_RPAREN, ")"),
                 ],
             ),
@@ -812,6 +832,12 @@ class BooleanExpressionEvalTestCase(TestCase):
                 context={},
                 expression="(true and false and false) or not true",
                 expect=False,
+            ),
+            EvalCase(
+                description="range literal equals range literal",
+                context={},
+                expression="(1..3) == (1..3)",
+                expect=True,
             ),
         ]
 

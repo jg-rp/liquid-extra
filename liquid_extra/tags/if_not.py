@@ -11,12 +11,15 @@ from liquid.lex import STRING_PATTERN
 from liquid.lex import boolean_expression_keywords
 
 from liquid.parse import expect
+from liquid.parse import expect_peek
 from liquid.parse import ExpressionParser
 from liquid.parse import Precedence
+from liquid.parse import parse_range_argument
 
 from liquid.context import Context
 from liquid.exceptions import LiquidTypeError
 
+from liquid import expression
 from liquid.expression import PrefixExpression
 from liquid.expression import is_truthy
 
@@ -35,6 +38,7 @@ from liquid.token import TOKEN_DOT
 from liquid.token import TOKEN_LBRACKET
 from liquid.token import TOKEN_RBRACKET
 from liquid.token import TOKEN_ILLEGAL
+from liquid.token import TOKEN_RANGE
 
 from liquid.builtin.tags.if_tag import IfTag
 
@@ -44,9 +48,12 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 TOKEN_NOT = sys.intern("not")
+TOKEN_RANGELPAREN = sys.intern("rangelparen")
 
 boolean_not_expression_rules = (
-    (TOKEN_FLOAT, r"\d+\.\d*"),
+    (TOKEN_RANGELPAREN, r"\((?=.+?\.\.)"),
+    (TOKEN_RANGE, r"\.\."),
+    (TOKEN_FLOAT, r"\d+\.(?!\.)\d*"),
     (TOKEN_INTEGER, r"\d+"),
     (TOKEN_NEGATIVE, r"-"),
     (TOKEN_STRING, STRING_PATTERN),
@@ -72,6 +79,34 @@ tokenize_boolean_not_expression = partial(
 )
 
 
+def parse_range_literal(stream: TokenStream) -> expression.RangeLiteral:
+    """Read a range literal from the token stream."""
+    # Start of a range expression (<int or id>..<int or id>)
+    expect(stream, TOKEN_RANGELPAREN)
+    stream.next_token()  # Eat left parenthesis.
+    start = parse_range_argument(stream)
+
+    expect_peek(stream, TOKEN_RANGE)
+    stream.next_token()
+    stream.next_token()  # Eat TOKEN_RANGE
+
+    stop = parse_range_argument(stream)
+    expect_peek(stream, TOKEN_RPAREN)
+
+    assert isinstance(
+        start,
+        (expression.Identifier, expression.IntegerLiteral, expression.FloatLiteral),
+    )
+    assert isinstance(
+        stop,
+        (expression.Identifier, expression.IntegerLiteral, expression.FloatLiteral),
+    )
+
+    expr = expression.RangeLiteral(start, stop)
+    stream.next_token()
+    return expr
+
+
 class NotPrefixExpression(PrefixExpression):
     def evaluate(self, context: Context):
         right = self.right.evaluate(context)
@@ -91,6 +126,7 @@ class NotExpressionParser(ExpressionParser):
     def __init__(self):
         super().__init__()
         self.prefix_funcs[TOKEN_NOT] = self.parse_prefix_expression
+        self.prefix_funcs[TOKEN_RANGELPAREN] = parse_range_literal
 
         # For grouped expressions
         self.prefix_funcs[TOKEN_LPAREN] = self.parse_grouped_expression
