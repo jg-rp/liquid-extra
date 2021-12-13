@@ -1,6 +1,12 @@
 Liquid Extra Change Log
 ========================
 
+Version 0.5.0
+-------------
+
+- Added a ``with`` tag. A tag that extends the local namespace for the duration of its
+  block.
+
 Version 0.4.0
 -------------
 

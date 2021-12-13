@@ -24,6 +24,7 @@ Extra Tags
 - `if (not)`_
 - `macro / call`_
 - `inline if / else (assign, echo and output statements)`_
+- `with`_
 
 Extra Filters
 
@@ -400,6 +401,35 @@ Liquid in lieu of macros. It's worth noting that ..
 - Macros can be defined within the template that's using them.
 - Multiple, common macros can be defined in one template and included in others when
   needed.
+
+with
+----
+
+Extend the local namespace with block scoped variables.
+
+.. code-block:: python
+
+    from liquid import Environment
+    from liquid import StrictUndefined
+
+    from liquid_extra.tags import WithTag
+
+    env = Environment(undefined=StrictUndefined)
+    env.add_tag(WithTag)
+
+    template = env.from_string("""
+        {% with p: collection.products.first %}
+          {{ p.title }}
+        {% endwith %}
+        {{ p.title }}
+
+        {% with a: 1, b: 3.4 %}
+          {{ a }} + {{ b }} = {{ a | plus: b }}
+        {% endwith %}
+    """)
+
+    data = {"collection": {"products": [{"title": "A Shoe"}]}}
+    print(template.render(**data))
 
 Extra Filters
 +++++++++++++

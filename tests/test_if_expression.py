@@ -553,13 +553,13 @@ class IfExpressionRenderTextCase(unittest.TestCase):
 
         template = env.from_string(r"{{ 123 | first }}")
 
-        self.assertEqual(template.render(), "123")
+        self.assertEqual(template.render(), "")
 
         # and render async
         async def coro(template: BoundTemplate):
             return await template.render_async()
 
-        self.assertEqual(asyncio.run(coro(template)), "123")
+        self.assertEqual(asyncio.run(coro(template)), "")
 
     def test_filter_argument_error(self):
         """Test unexpected filter arguments."""

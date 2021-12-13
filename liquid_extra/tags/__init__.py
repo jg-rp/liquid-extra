@@ -4,3 +4,4 @@ from .macro import CallTag
 from .if_expressions import InlineIfStatement
 from .if_expressions import InlineIfEchoTag
 from .if_expressions import InlineIfAssignTag
+from .withblock import WithTag
