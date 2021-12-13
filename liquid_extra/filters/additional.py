@@ -1,5 +1,4 @@
 import json
-import warnings
 
 from liquid.context import get_item
 
@@ -18,15 +17,7 @@ class JSON:
 
     name = "json"
 
-    def __init__(self, env=None, default=None):
-        if env is not None:
-            warnings.warn(
-                "the `env` argument to `JSON` is depreciated and will be removed in a "
-                "future release.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
+    def __init__(self, default=None):
         self.default = default
 
     @liquid_filter
@@ -49,15 +40,7 @@ class Translate:
 
     name = "t"
 
-    def __init__(self, env=None, locales=None):
-        if env is not None:
-            warnings.warn(
-                "the `env` argument to `Translate` is depreciated and will be removed "
-                "in a future release.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
+    def __init__(self, locales=None):
         self.locales = locales or {}
 
     @liquid_filter

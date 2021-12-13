@@ -497,7 +497,7 @@ supporting ``dict``, ``list``, ``tuple``, ``str``, ``int``, ``float``, some Enum
 
 
 The ``JSON`` filter takes an optional ``default`` argument. ``default`` will be passed
-to ``json.dumps`` and should be a function that gets called for objects that can’t
+to ``json.dumps`` and should be a function that gets called for objects that can't
 otherwise be serialized. For example, this default function adds support for serializing 
 `data classes <https://docs.python.org/3/library/dataclasses.html>`_.
 
