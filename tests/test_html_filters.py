@@ -1,3 +1,6 @@
+"""Test cases for html filters."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 from unittest import skipIf
 
 try:
@@ -28,28 +31,39 @@ class StylesheetTagFilterTestCase(FilterTestCase):
                 val="assets/style.css",
                 args=[],
                 kwargs={},
-                expect='<link href="assets/style.css" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="assets/style.css" rel="stylesheet" '
+                    'type="text/css" media="all" />'
+                ),
             ),
             Case(
                 description="remote url",
                 val="https://example.com/static/style.css",
                 args=[],
                 kwargs={},
-                expect='<link href="https://example.com/static/style.css" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="https://example.com/static/style.css" '
+                    'rel="stylesheet" type="text/css" media="all" />'
+                ),
             ),
             Case(
                 description="html escape url",
                 val="<b>assets/style.css</b>",
                 args=[],
                 kwargs={},
-                expect='<link href="&lt;b&gt;assets/style.css&lt;/b&gt;" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="&lt;b&gt;assets/style.css&lt;/b&gt;" rel="stylesheet" '
+                    'type="text/css" media="all" />'
+                ),
             ),
             Case(
                 description="not a string",
                 val=42,
                 args=[],
                 kwargs={},
-                expect='<link href="42" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="42" rel="stylesheet" type="text/css" media="all" />'
+                ),
             ),
         ]
 
@@ -65,7 +79,10 @@ class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
             RenderCase(
                 description="from context variable",
                 template=r"{{ url | stylesheet_tag }}",
-                expect='<link href="assets/style.css" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="assets/style.css" rel="stylesheet" '
+                    'type="text/css" media="all" />'
+                ),
                 globals={"url": "assets/style.css"},
                 partials={},
             ),
@@ -87,21 +104,30 @@ class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
             RenderCase(
                 description="relative url",
                 template=r"{{ url | stylesheet_tag }}",
-                expect='<link href="assets/style.css" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="assets/style.css" rel="stylesheet" '
+                    'type="text/css" media="all" />'
+                ),
                 globals={"url": "assets/style.css"},
                 partials={},
             ),
             RenderCase(
                 description="unsafe url from context",
                 template=r"{{ url | stylesheet_tag }}",
-                expect='<link href="&lt;b&gt;assets/style.css&lt;/b&gt;" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="&lt;b&gt;assets/style.css&lt;/b&gt;" rel="stylesheet" '
+                    'type="text/css" media="all" />'
+                ),
                 globals={"url": "<b>assets/style.css</b>"},
                 partials={},
             ),
             RenderCase(
                 description="safe url from context",
                 template=r"{{ url | stylesheet_tag }}",
-                expect='<link href="&lt;b&gt;assets/style.css&lt;/b&gt;" rel="stylesheet" type="text/css" media="all" />',
+                expect=(
+                    '<link href="&lt;b&gt;assets/style.css&lt;/b&gt;" rel="stylesheet" '
+                    'type="text/css" media="all" />'
+                ),
                 globals={"url": Markup("<b>assets/style.css</b>")},
                 partials={},
             ),
@@ -135,7 +161,12 @@ class ScriptTagFilterTestCase(FilterTestCase):
                 val="https://example.com/static/assets/app.js",
                 args=[],
                 kwargs={},
-                expect='<script src="https://example.com/static/assets/app.js" type="text/javascript"></script>',
+                expect=(
+                    "<script "
+                    'src="https://example.com/static/assets/app.js" '
+                    'type="text/javascript">'
+                    "</script>"
+                ),
             ),
             Case(
                 description="not a string",
@@ -158,7 +189,10 @@ class RenderScriptTagFilterTestCase(RenderFilterTestCase):
             RenderCase(
                 description="url from context",
                 template=r"{{ url | script_tag }}",
-                expect='<script src="assets/assets/app.js" type="text/javascript"></script>',
+                expect=(
+                    '<script src="assets/assets/app.js" '
+                    'type="text/javascript"></script>'
+                ),
                 globals={"url": "assets/assets/app.js"},
                 partials={},
             ),
@@ -181,21 +215,30 @@ class RenderScriptTagFilterTestCase(RenderFilterTestCase):
             RenderCase(
                 description="relative url",
                 template=r"{{ url | script_tag }}",
-                expect='<script src="assets/assets/app.js" type="text/javascript"></script>',
+                expect=(
+                    '<script src="assets/assets/app.js" '
+                    'type="text/javascript"></script>'
+                ),
                 globals={"url": "assets/assets/app.js"},
                 partials={},
             ),
             RenderCase(
                 description="unsafe url from context",
                 template=r"{{ url | script_tag }}",
-                expect='<script src="&lt;b&gt;assets/assets/app.js&lt;/b&gt;" type="text/javascript"></script>',
+                expect=(
+                    '<script src="&lt;b&gt;assets/assets/app.js&lt;/b&gt;" '
+                    'type="text/javascript"></script>'
+                ),
                 globals={"url": "<b>assets/assets/app.js</b>"},
                 partials={},
             ),
             RenderCase(
                 description="safe url from context",
                 template=r"{{ url | script_tag }}",
-                expect='<script src="&lt;b&gt;assets/assets/app.js&lt;/b&gt;" type="text/javascript"></script>',
+                expect=(
+                    '<script src="&lt;b&gt;assets/assets/app.js&lt;/b&gt;" '
+                    'type="text/javascript"></script>'
+                ),
                 globals={"url": Markup("<b>assets/assets/app.js</b>")},
                 partials={},
             ),

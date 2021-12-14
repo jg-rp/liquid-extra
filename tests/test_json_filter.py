@@ -1,3 +1,6 @@
+"""Test cases for the `json` filter."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 from dataclasses import dataclass
 from dataclasses import is_dataclass
 from dataclasses import asdict
@@ -59,17 +62,25 @@ class JSONFilterTestCase(FilterTestCase):
     def test_json_with_encoder_func(self):
         test_cases = [
             Case(
-                description="serialize an arbitrary object",
+                description="serialize a dataclass",
                 val={"foo": MockData(3, 4)},
                 args=[],
                 kwargs={},
                 expect=r'{"foo": {"length": 3, "width": 4}}',
+            ),
+            Case(
+                description="serialize an arbitrary object",
+                val={"foo": object()},
+                args=[],
+                kwargs={},
+                expect=FilterArgumentError,
             ),
         ]
 
         def default(obj):
             if is_dataclass(obj):
                 return asdict(obj)
+            raise TypeError(f"can't serialize object {obj}")
 
         self.env.add_filter(JSON.name, JSON(default=default))
         self._test(self.ctx.filter(JSON.name), test_cases)
@@ -103,6 +114,13 @@ class RenderJSONFilterTestCase(RenderFilterTestCase):
             RenderCase(
                 description="render an arbitrary object as JSON",
                 template=r"{{ foo | json }}",
+                expect=FilterArgumentError,
+                globals={"foo": object()},
+                partials={},
+            ),
+            RenderCase(
+                description="render a dataclass as JSON",
+                template=r"{{ foo | json }}",
                 expect=r'{"length": 3, "width": 4}',
                 globals={"foo": MockData(3, 4)},
                 partials={},
@@ -112,5 +130,6 @@ class RenderJSONFilterTestCase(RenderFilterTestCase):
         def default(obj):
             if is_dataclass(obj):
                 return asdict(obj)
+            raise TypeError(f"can't serialize object {obj}")
 
         self._test(JSON(default=default), test_cases)

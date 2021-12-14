@@ -1,7 +1,10 @@
-from .if_not import IfNotTag
-from .macro import MacroTag
-from .macro import CallTag
-from .if_expressions import InlineIfStatement
-from .if_expressions import InlineIfEchoTag
-from .if_expressions import InlineIfAssignTag
-from .withblock import WithTag
+# flake8: noqa
+# pylint: disable=useless-import-alias,missing-module-docstring
+
+from .if_not import IfNotTag as IfNotTag
+from .macro import MacroTag as MacroTag
+from .macro import CallTag as CallTag
+from .if_expressions import InlineIfStatement as InlineIfStatement
+from .if_expressions import InlineIfEchoTag as InlineIfEchoTag
+from .if_expressions import InlineIfAssignTag as InlineIfAssignTag
+from .withblock import WithTag as WithTag

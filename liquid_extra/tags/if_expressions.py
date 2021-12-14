@@ -1,6 +1,8 @@
 """Drop-in replacements for the standard output statement and `assign` and `echo` tags
 that support inline `if` expressions.
 """
+# pylint: disable=missing-class-docstring
+
 from __future__ import annotations
 
 import sys
@@ -170,6 +172,7 @@ class FilteredIfExpression(FilteredExpression):
             f"filters={self.filters})"
         )
 
+    # pylint: disable=no-self-use
     def _apply_filters(
         self, result: object, filters: List[Filter], context: Context
     ) -> object:
@@ -281,7 +284,7 @@ class IfExpressionParser(ExpressionParser):
 
     def parse_filters(self, stream: TokenStream) -> List[Filter]:
         """Keep reading filters from the token stream until end of expression."""
-        filters = []
+        filters: List[Filter] = []
         while stream.current.type not in (TOKEN_EOF, TOKEN_IF):
             filters.append(self.parse_filter(stream))
         return filters
@@ -298,12 +301,12 @@ class IfExpressionParser(ExpressionParser):
 
         if stream.current.type == TOKEN_IF:
             stream.next_token()  # Eat `if` token
-            condition = self.parse_boolean_expression(stream)
+            condition: Optional[Expression] = self.parse_boolean_expression(stream)
             stream.next_token()
 
             if stream.current.type == TOKEN_ELSE:
                 stream.next_token()  # Eat `else` token
-                alternative = self.parse_expression(stream)
+                alternative: Optional[Expression] = self.parse_expression(stream)
                 stream.next_token()
             else:
                 alternative = None

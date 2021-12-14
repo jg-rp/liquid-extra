@@ -1,3 +1,6 @@
+"""Node and tag definitions for the `if (not)` tag."""
+# pylint: disable=missing-class-docstring
+
 from __future__ import annotations
 
 import sys
@@ -108,7 +111,7 @@ def parse_range_literal(stream: TokenStream) -> expression.RangeLiteral:
 
 
 class NotPrefixExpression(PrefixExpression):
-    def evaluate(self, context: Context):
+    def evaluate(self, context: Context) -> object:
         right = self.right.evaluate(context)
 
         if self.operator == "-":
@@ -123,7 +126,7 @@ class NotPrefixExpression(PrefixExpression):
 
 
 class NotExpressionParser(ExpressionParser):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.prefix_funcs[TOKEN_NOT] = self.parse_prefix_expression
         self.prefix_funcs[TOKEN_RANGELPAREN] = parse_range_literal
@@ -144,6 +147,7 @@ class NotExpressionParser(ExpressionParser):
         return exp
 
     def parse_grouped_expression(self, stream: TokenStream) -> Expression:
+        """Parse a possibly grouped expression from a stream of tokens."""
         stream.next_token()
         exp = self.parse_expression(stream)
 

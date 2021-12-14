@@ -23,6 +23,7 @@ from liquid.context import Context
 from liquid.context import ReadOnlyChainMap
 
 from liquid.expression import Expression
+from liquid.expression import NIL
 from liquid.exceptions import LiquidSyntaxError
 
 from liquid.lex import STRING_PATTERN
@@ -71,18 +72,6 @@ TAG_ENDMACRO = sys.intern("endmacro")
 TAG_CALL = sys.intern("call")
 
 
-class Missing:
-    """A distinct object representing the absence of a value."""
-
-    def __init__(self):
-        self._missing = object()
-
-
-# Macro argument defaults could be `None`, so we're using `Missing` to indicate the
-# lack of a default value.
-_missing = Missing()
-
-
 class CallKeywordArg(NamedTuple):
     """A named argument as used in a `call` expression."""
 
@@ -94,7 +83,7 @@ class MacroArg(NamedTuple):
     """A macro argument with an optional default value."""
 
     name: str
-    default: Union[Missing, Expression] = _missing
+    default: Expression = NIL
 
 
 class Macro(NamedTuple):
@@ -156,21 +145,23 @@ class MacroNode(Node):
         self.block = block
 
     def __str__(self) -> str:  # pragma: no cover
-        args = []
+        args: List[str] = []
         for arg, default in self.args:
-            if default is not None:
+            if default is not NIL:
                 args.append(f"{arg}={default}")
             else:
                 args.append(arg)
         return f"def {self.name}({', '.join(args)}) {{ {self.block} }}"
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self) -> str:  # pragma: no cover
         return f"MacroNode(tok={self.tok}, name={self.name}, block='{self.block}')"
 
-    def render_to_output(self, context: Context, buffer: TextIO):
-        if "macros" not in context._tag_namespace:
-            context._tag_namespace["macros"] = {}
-        context._tag_namespace["macros"][self.name] = Macro(self.args, self.block)
+    def render_to_output(self, context: Context, buffer: TextIO) -> Optional[bool]:
+        if "macros" not in context.tag_namespace:
+            context.tag_namespace["macros"] = {}
+
+        context.tag_namespace["macros"][self.name] = Macro(self.args, self.block)
+        return False
 
 
 class CallNode(Node):
@@ -196,7 +187,7 @@ class CallNode(Node):
             args.append(f"{name}: {expr}")
         return f"{self.name}({', '.join(args)})"
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self) -> str:  # pragma: no cover
         return f"CallNode(tok={self.tok}, name={self.name})"
 
     def _make_context(self, context: Context, macro: Macro) -> Context:
@@ -205,14 +196,12 @@ class CallNode(Node):
 
         # Bind positional arguments to names. If there are more positional arguments
         # than names defined in the macro, they'll be stored in `excess_args`.
-        excess_args = []
-        for name, expr in itertools.zip_longest(
-            macro_names, self.args, fillvalue=_missing
-        ):
-            if name == _missing:
+        excess_args: List[Expression] = []
+        for name, expr in itertools.zip_longest(macro_names, self.args, fillvalue=NIL):
+            if name == NIL:
                 excess_args.append(expr)
                 continue
-            if expr == _missing:
+            if expr == NIL:
                 break
             args[name] = expr
 
@@ -221,7 +210,7 @@ class CallNode(Node):
         # than once.
 
         # Update default and/or missing arguments with keyword arguments.
-        excess_kwargs = {}
+        excess_kwargs: Dict[str, Expression] = {}
         for name, expr in self.kwargs:
             assert isinstance(name, str)
             if name in macro_names:
@@ -229,7 +218,7 @@ class CallNode(Node):
             else:
                 excess_kwargs[name] = expr
 
-        excess = {
+        excess: Dict[str, object] = {
             "kwargs": {
                 name: expr.evaluate(context) for name, expr in excess_kwargs.items()
             },
@@ -239,7 +228,7 @@ class CallNode(Node):
         # NOTE: default arguments are bound late.
         bound_args: Dict[str, object] = {}
         for name, expr in args.items():
-            if expr == _missing:
+            if expr == NIL:
                 bound_args[name] = context.env.undefined(name)
             else:
                 assert isinstance(expr, Expression)
@@ -250,13 +239,13 @@ class CallNode(Node):
         return context.copy(namespace, disabled_tags=[TAG_INCLUDE])
 
     def _get_macro(self, context: Context) -> Union[Macro, Undefined]:
-        macro = context._tag_namespace.get("macros", {}).get(
+        macro = context.tag_namespace.get("macros", {}).get(
             self.name, context.env.undefined(self.name)
         )
         assert isinstance(macro, (Macro, Undefined))
         return macro
 
-    def render_to_output(self, context: Context, buffer: TextIO):
+    def render_to_output(self, context: Context, buffer: TextIO) -> Optional[bool]:
         macro = self._get_macro(context)
 
         if is_undefined(macro):
@@ -270,7 +259,9 @@ class CallNode(Node):
 
         return True
 
-    async def render_to_output_async(self, context: Context, buffer: TextIO):
+    async def render_to_output_async(
+        self, context: Context, buffer: TextIO
+    ) -> Optional[bool]:
         macro = self._get_macro(context)
 
         if is_undefined(macro):
@@ -394,7 +385,7 @@ def parse_macro_argument(stream: TokenStream) -> MacroArg:
         stream.next_token()
     else:
         # A positional argument
-        default = _missing
+        default = NIL
 
     return MacroArg(name, default)
 
@@ -403,7 +394,7 @@ def parse_call_argument(stream: TokenStream) -> Tuple[Optional[str], Expression]
     """Return the next argument from the given token stream."""
     if stream.peek.type == TOKEN_COLON:
         # A keyword argument
-        name = str(parse_unchained_identifier(stream))
+        name: Optional[str] = str(parse_unchained_identifier(stream))
         stream.next_token()
         stream.next_token()  # Eat colon
     else:

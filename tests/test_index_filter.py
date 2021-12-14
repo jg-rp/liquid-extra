@@ -1,3 +1,6 @@
+"""Test cases for the `index` filter."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 from dataclasses import dataclass
 
 from liquid import Environment
@@ -20,7 +23,7 @@ class MockObject:
 class IndexFilterTestCase(FilterTestCase):
     """Test the Index template filter."""
 
-    def test_Index_filter(self):
+    def test_index_filter(self):
         test_cases = [
             Case(
                 description="array of strings",
@@ -56,7 +59,7 @@ class IndexFilterTestCase(FilterTestCase):
 class RenderIndexFilterTestCase(RenderFilterTestCase):
     """Test the Index filter from a template."""
 
-    def test_render_Index_filter(self):
+    def test_render_index_filter(self):
         test_cases = [
             RenderCase(
                 description="array of strings",

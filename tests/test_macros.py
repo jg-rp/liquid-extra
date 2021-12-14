@@ -1,3 +1,6 @@
+"""Test cases for `macro` and `call` tags."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 import asyncio
 from unittest import TestCase
 

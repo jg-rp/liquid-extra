@@ -1,3 +1,5 @@
+"""Base test cases and table driven test helpers."""
+# pylint: disable=missing-class-docstring,missing-function-docstring,too-many-lines
 import unittest
 
 from inspect import isclass
@@ -9,6 +11,8 @@ from typing import Dict
 from typing import Iterable
 from typing import Callable
 from typing import Mapping
+from typing import Union
+from typing import Type
 
 from liquid.environment import Environment
 
@@ -27,7 +31,7 @@ class Case(NamedTuple):
 class RenderCase(NamedTuple):
     description: str
     template: str
-    expect: str
+    expect: Union[str, Type[Exception]]
     globals: Mapping[str, Any]
     partials: Dict[str, Any]
 
@@ -61,5 +65,9 @@ class RenderFilterTestCase(unittest.TestCase):
             template = self.env.from_string(case.template, globals=case.globals)
 
             with self.subTest(msg=case.description):
-                result = template.render()
-                self.assertEqual(result, case.expect)
+                if isclass(case.expect) and issubclass(case.expect, Exception):
+                    with self.assertRaises(case.expect):
+                        template.render()
+                else:
+                    result = template.render()
+                    self.assertEqual(result, case.expect)

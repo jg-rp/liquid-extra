@@ -17,6 +17,9 @@ docutils = "*"
 flake8-bugbear = "*"
 twine = "*"
 ipython = "*"
+mypy = "*"
+types-python-dateutil = "*"
+types-markupsafe = "*"
 
 [requires]
 python_version = "3.8"

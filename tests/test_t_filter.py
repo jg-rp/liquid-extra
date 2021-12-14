@@ -1,3 +1,6 @@
+"""Translation filter test cases."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 from liquid_extra.filters import Translate
 
 from .base import FilterTestCase

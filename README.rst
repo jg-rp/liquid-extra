@@ -7,6 +7,10 @@ A growing collection of extra tags and filters for `Python Liquid <https://githu
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Version
 
+.. image:: https://github.com/jg-rp/liquid-extra/actions/workflows/tests.yaml/badge.svg
+    :target: https://github.com/jg-rp/liquid-extra/tree/main/tests
+    :alt: Tests
+
 .. image:: https://img.shields.io/pypi/l/python-liquid-extra.svg
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Licence

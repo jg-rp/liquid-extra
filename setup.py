@@ -1,7 +1,8 @@
+# pylint: disable=missing-module-docstring
 import setuptools
 
 
-with open("README.rst", "r") as fd:
+with open("README.rst", "r", encoding="utf-8") as fd:
     long_description = fd.read()
 
 setuptools.setup(
@@ -14,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["tests*"]),
     include_package_data=True,
     zip_safe=False,
-    install_requires=["python-liquid>=0.11.0"],
+    install_requires=["python-liquid>=1.0.3"],
     test_suite="tests",
     python_requires=">=3.7",
     licence="MIT",
@@ -26,11 +27,13 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     project_urls={
         "Issue Tracker": "https://github.com/jg-rp/liquid-extra/issues",
         "Source Code": "https://github.com/jg-rp/liquid-extra",
+        "Change Log": "https://github.com/jg-rp/liquid-extra/blob/main/CHANGES.rst",
     },
 )

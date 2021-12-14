@@ -1,10 +1,18 @@
+"""Some additional filters that don't belong to any specific category."""
 import json
+
+from typing import Any
+from typing import Optional
+from typing import Mapping
 
 from liquid.context import get_item
 
 from liquid.filter import liquid_filter
 from liquid.filter import with_context
 from liquid.filter import with_environment
+
+from liquid import Environment
+from liquid import Context
 
 
 class JSON:
@@ -17,11 +25,11 @@ class JSON:
 
     name = "json"
 
-    def __init__(self, default=None):
+    def __init__(self, default: Any = None):
         self.default = default
 
     @liquid_filter
-    def __call__(self, obj):
+    def __call__(self, obj: object) -> str:
         return json.dumps(obj, default=self.default)
 
 
@@ -40,13 +48,20 @@ class Translate:
 
     name = "t"
 
-    def __init__(self, locales=None):
-        self.locales = locales or {}
+    def __init__(self, locales: Optional[Mapping[str, Mapping[str, object]]] = None):
+        self.locales: Mapping[str, Mapping[str, object]] = locales or {}
 
     @liquid_filter
-    def __call__(self, key, *, context, environment, **kwargs):
+    def __call__(
+        self,
+        key: object,
+        *,
+        context: Context,
+        environment: Environment,
+        **kwargs: Any,
+    ) -> str:
         locale = context.resolve("locale", default="default")
-        translations = self.locales.get(locale, {})
+        translations: Mapping[str, object] = self.locales.get(locale, {})
 
         key = str(key)
         path = key.split(".")

@@ -83,7 +83,7 @@ class WithNode(Node):
         namespace = {k: v.evaluate(context) for k, v in self.args.items()}
 
         with context.extend(namespace):
-            self.block.render(context, buffer)
+            return self.block.render(context, buffer)
 
 
 class WithTag(Tag):

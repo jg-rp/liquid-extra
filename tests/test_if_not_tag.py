@@ -1,3 +1,6 @@
+"""Test cases for the `if (not)` tag.."""
+# pylint: disable=missing-class-docstring,missing-function-docstring,too-many-lines
+
 from unittest import TestCase
 
 from typing import Mapping
@@ -8,6 +11,8 @@ from liquid.context import Context
 from liquid.environment import Environment
 from liquid.loaders import DictLoader
 from liquid.stream import TokenStream
+from liquid import Mode
+from liquid.exceptions import Error
 
 from liquid.expression import BooleanExpression
 from liquid.expression import IdentifierPathElement
@@ -19,6 +24,7 @@ from liquid.expression import FloatLiteral
 from liquid.expression import PrefixExpression
 from liquid.expression import InfixExpression
 
+from liquid.golden.if_tag import cases as golden_cases
 
 from liquid.token import Token
 from liquid.token import TOKEN_IDENTIFIER
@@ -48,13 +54,6 @@ from liquid_extra.tags.if_not import TOKEN_NOT
 from liquid_extra.tags.if_not import TOKEN_RANGELPAREN
 
 from liquid_extra.tags import IfNotTag
-
-# XXX: A lot of these test cases are coppied from python-liquid. We do need to
-# make sure `not` expressions pass the same unit tests as standard `if` expressions,
-# but this number of duplicated test cases could become a maintenance nightmare.
-
-# TODO: Refactor python-liquid tests and make them importable? Or at least make the
-# `test_cases` lists importable.
 
 
 class LexerCase(NamedTuple):
@@ -874,8 +873,12 @@ class BooleanRenderTestCases(TestCase):
                 globals={"product": {"title": "foo"}},
             ),
             RenderCase(
-                description="condition with literal consequence and literal alternative",
-                template=r"{% if product.title == 'hello' %}bar{% else %}baz{% endif %}",
+                description=(
+                    "condition with literal consequence and literal alternative"
+                ),
+                template=(
+                    r"{% if product.title == 'hello' %}bar{% else %}baz{% endif %}"
+                ),
                 expect="baz",
                 globals={"product": {"title": "foo"}},
             ),
@@ -892,7 +895,9 @@ class BooleanRenderTestCases(TestCase):
                 globals={"product": {"title": "foo"}},
             ),
             RenderCase(
-                description="condition with conditional alternative and final alternative",
+                description=(
+                    "condition with conditional alternative and final alternative"
+                ),
                 template=(
                     r"{% if product.title == 'hello' %}"
                     r"foo"
@@ -923,7 +928,11 @@ class BooleanRenderTestCases(TestCase):
             ),
             RenderCase(
                 description="nested condition in the consequence block",
-                template=r"{% if product %}{% if title == 'Hello' %}baz{% endif %}{% endif %}",
+                template=(
+                    r"{% if product %}"
+                    r"{% if title == 'Hello' %}baz{% endif %}"
+                    r"{% endif %}"
+                ),
                 expect="baz",
                 globals={
                     "product": {"title": "foo"},
@@ -1046,3 +1055,21 @@ class BooleanRenderTestCases(TestCase):
         ]
 
         self._test(test_cases)
+
+    def test_golden_if(self):
+        """Test liquid's golden test cases."""
+        for case in golden_cases:
+            env = Environment(
+                loader=DictLoader(case.partials),
+                tolerance=Mode.STRICT,
+            )
+
+            with self.subTest(msg=case.description):
+                if case.error:
+                    with self.assertRaises(Error):
+                        template = env.from_string(case.template, globals=case.globals)
+                        result = template.render()
+                else:
+                    template = env.from_string(case.template, globals=case.globals)
+                    result = template.render()
+                    self.assertEqual(result, case.expect)

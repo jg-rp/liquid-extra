@@ -1,3 +1,6 @@
+"""Test cases for `if` expression tags."""
+# pylint: disable=missing-class-docstring,missing-function-docstring
+
 import asyncio
 import unittest
 
