@@ -223,6 +223,19 @@ class MacroRenderTestCase(TestCase):
                 globals={},
                 partials={},
             ),
+            RenderCase(
+                description="default before positional",
+                template=(
+                    r"{% macro 'func' you: 'brian', greeting %}"
+                    r"{{ greeting }}, {{ you }}!"
+                    r"{% endmacro %}"
+                    r"{% call 'func' %} "
+                    r"{% call 'func' you: 'World', greeting: 'Goodbye' %}"
+                ),
+                expect=", brian! Goodbye, World!",
+                globals={},
+                partials={},
+            ),
         ]
 
         for case in test_cases:

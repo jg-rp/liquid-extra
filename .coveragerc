@@ -2,4 +2,3 @@
 omit =
     # omit anything in a .local directory anywhere
     */.local/*
-    */liquipy2/*

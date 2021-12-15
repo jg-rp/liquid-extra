@@ -32,6 +32,7 @@ setuptools.setup(
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     project_urls={
+        "Documentation": "https://jg-rp.github.io/liquid/extra/introduction",
         "Issue Tracker": "https://github.com/jg-rp/liquid-extra/issues",
         "Source Code": "https://github.com/jg-rp/liquid-extra",
         "Change Log": "https://github.com/jg-rp/liquid-extra/blob/main/CHANGES.rst",
