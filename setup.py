@@ -7,7 +7,7 @@ with open("README.rst", "r", encoding="utf-8") as fd:
 
 setuptools.setup(
     name="python-liquid-extra",
-    version="0.5.0",
+    version="1.0.0",
     description="Extra tags an filters for python-liquid.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
@@ -20,7 +20,7 @@ setuptools.setup(
     python_requires=">=3.7",
     licence="MIT",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
