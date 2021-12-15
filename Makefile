@@ -6,8 +6,10 @@ test:
 
 .PHONY: coverage
 coverage:
-	coverage run -m unittest
-	coverage html
+	python -m coverage erase
+	tox -c tox_cov.ini
+	python -m coverage combine
+	python -m coverage html
 
 
 .PHONY: build
