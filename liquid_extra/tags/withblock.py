@@ -8,10 +8,12 @@ from functools import partial
 
 from typing import TYPE_CHECKING
 from typing import Dict
+from typing import List
 from typing import NamedTuple
 from typing import Optional
 from typing import TextIO
 
+from liquid.ast import ChildNode
 from liquid.ast import Node
 from liquid.ast import BlockNode
 
@@ -84,6 +86,24 @@ class WithNode(Node):
 
         with context.extend(namespace):
             return self.block.render(context, buffer)
+
+    async def render_to_output_async(
+        self, context: Context, buffer: TextIO
+    ) -> Optional[bool]:
+        namespace = {k: await v.evaluate_async(context) for k, v in self.args.items()}
+        with context.extend(namespace):
+            return await self.block.render_async(context, buffer)
+
+    def children(self) -> List[ChildNode]:
+        return [
+            ChildNode(
+                linenum=self.tok.linenum, node=self.block, block_scope=list(self.args)
+            ),
+            *[
+                ChildNode(linenum=self.tok.linenum, expression=expr)
+                for expr in self.args.values()
+            ],
+        ]
 
 
 class WithTag(Tag):

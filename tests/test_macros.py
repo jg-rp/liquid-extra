@@ -195,7 +195,7 @@ class MacroRenderTestCase(TestCase):
                 template=(
                     r"{% macro 'func' %}"
                     r"{% for arg in kwargs %}"
-                    r"{{ arg.0 }} => {{ arg.1 }}, "
+                    r"{{ arg[0] }} => {{ arg[1] }}, "
                     r"{% endfor %}"
                     r"{% endmacro %}"
                     r"{% call 'func', a: 1, b: 2 %}"
@@ -308,3 +308,36 @@ class MacroRenderTestCase(TestCase):
 
         result = asyncio.run(coro())
         self.assertEqual(result, "Hello, World!Hello, you!")
+
+
+class AnalyzeMacroTestCase(TestCase):
+    def test_analyze_macro_tag(self):
+        """Test that we can statically analyze macro and call tags."""
+        env = Environment()
+        env.add_tag(MacroTag)
+        env.add_tag(CallTag)
+
+        template = env.from_string(
+            r"{% macro 'foo', you: 'World', arg: n %}"
+            r"Hello, {{ you }}!"
+            r"{% endmacro %}"
+            r"{% call 'foo' %}"
+            r"{% assign x = 'you' %}"
+            r"{% call 'foo', you: x %}"
+        )
+
+        expected_template_globals = {
+            "n": [("<string>", 1)],
+        }
+        expected_template_locals = {"x": [("<string>", 1)]}
+        expected_refs = {
+            "n": [("<string>", 1)],
+            "you": [("<string>", 1)],
+            "x": [("<string>", 1)],
+        }
+
+        analysis = template.analyze()
+
+        self.assertEqual(analysis.local_variables, expected_template_locals)
+        self.assertEqual(analysis.global_variables, expected_template_globals)
+        self.assertEqual(analysis.variables, expected_refs)

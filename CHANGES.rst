@@ -1,6 +1,11 @@
 Liquid Extra Change Log
 ========================
 
+Version 1.1.0
+-------------
+
+- Add support for static analysis of templates that make use of extra tags.
+
 Version 1.0.0
 -------------
 

@@ -20,6 +20,7 @@ ipython = "*"
 mypy = "*"
 types-python-dateutil = "*"
 types-markupsafe = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"

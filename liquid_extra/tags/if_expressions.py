@@ -116,9 +116,6 @@ tokenize_if_expression = partial(
 
 
 class FilteredIfExpression(FilteredExpression):
-
-    __slots__ = ("expression", "filters", "condition", "alternative", "tail_filters")
-
     def __init__(
         self,
         expression: Expression,

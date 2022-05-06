@@ -14,6 +14,7 @@ from typing import TextIO
 from typing import Union
 from typing import TYPE_CHECKING
 
+from liquid.ast import ChildNode
 from liquid.ast import Node
 from liquid.ast import BlockNode
 
@@ -163,6 +164,22 @@ class MacroNode(Node):
         context.tag_namespace["macros"][self.name] = Macro(self.args, self.block)
         return False
 
+    def children(self) -> List[ChildNode]:
+        # We don't currently have a good, generic way to model the `macro`/`call`
+        # relationship for static analysis. When a macro is called, arguments without
+        # defaults are expected to be `Undefined`.
+        _children = [
+            ChildNode(
+                linenum=self.tok.linenum,
+                node=self.block,
+                block_scope=[arg.name for arg in self.args],
+            )
+        ]
+        for _, expr in self.args:
+            if expr != NIL:
+                _children.append(ChildNode(linenum=self.tok.linenum, expression=expr))
+        return _children
+
 
 class CallNode(Node):
     """Parse tree node representing a call to a macro."""
@@ -274,6 +291,18 @@ class CallNode(Node):
         await macro.block.render_async(ctx, buffer)
 
         return True
+
+    def children(self) -> List[ChildNode]:
+        return [
+            *[
+                ChildNode(linenum=self.tok.linenum, expression=expr)
+                for expr in self.args
+            ],
+            *[
+                ChildNode(linenum=self.tok.linenum, expression=arg.expr)
+                for arg in self.kwargs
+            ],
+        ]
 
 
 class MacroTag(Tag):

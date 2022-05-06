@@ -21,6 +21,10 @@ A growing collection of extra tags and filters for `Python Liquid <https://githu
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Python versions
 
+.. image:: https://img.shields.io/badge/pypy-3.7%20%7C%203.8-blue
+    :target: https://pypi.org/project/python-liquid/
+    :alt: PyPy versions
+
 
 Installing
 ----------

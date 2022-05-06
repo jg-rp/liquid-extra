@@ -62,3 +62,36 @@ class RenderWithTagTestCase(TestCase):
             with self.subTest(msg=case.description):
                 template = env.from_string(case.template, globals=case.globals)
                 self.assertEqual(template.render(), case.expect)
+
+
+class AnalyzeWithTestCase(TestCase):
+    def test_analyze_macro_tag(self):
+        """Test that we can statically analyze macro and call tags."""
+        env = Environment()
+        env.add_tag(WithTag)
+
+        template = env.from_string(
+            r"{% with p: collection.products.first %}"
+            r"{{ p.title }}"
+            r"{% endwith %}"
+            r"{{ p.title }}"
+            r"{{ collection.products.first.title }}"
+        )
+
+        expected_template_globals = {
+            "collection.products.first": [("<string>", 1)],
+            "p.title": [("<string>", 1)],
+            "collection.products.first.title": [("<string>", 1)],
+        }
+        expected_template_locals = {}
+        expected_refs = {
+            "collection.products.first": [("<string>", 1)],
+            "collection.products.first.title": [("<string>", 1)],
+            "p.title": [("<string>", 1), ("<string>", 1)],
+        }
+
+        analysis = template.analyze()
+
+        self.assertEqual(analysis.local_variables, expected_template_locals)
+        self.assertEqual(analysis.global_variables, expected_template_globals)
+        self.assertEqual(analysis.variables, expected_refs)
