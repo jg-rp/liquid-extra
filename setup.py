@@ -7,7 +7,7 @@ with open("README.rst", "r", encoding="utf-8") as fd:
 
 setuptools.setup(
     name="python-liquid-extra",
-    version="1.1.0",
+    version="1.1.1",
     description="Extra tags an filters for python-liquid.",
     long_description=long_description,
     long_description_content_type="text/x-rst",

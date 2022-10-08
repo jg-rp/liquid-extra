@@ -1,6 +1,13 @@
 Liquid Extra Change Log
 ========================
 
+Version 1.1.1
+-------------
+
+- Fix missing expressions from ``FilteredIfExpression.children()``. See
+  `#4 <https://github.com/jg-rp/liquid-extra/issues/4>`_.
+
+
 Version 1.1.0
 -------------
 

@@ -268,6 +268,24 @@ class FilteredIfExpression(FilteredExpression):
 
         return result
 
+    def children(self) -> List[Expression]:
+        _children = [self.expression]
+        for fltr in self.filters:
+            _children.extend(fltr.args)
+            _children.extend(fltr.kwargs.values())
+
+        if self.condition is not None:
+            _children.append(self.condition)
+
+        if self.alternative is not None:
+            _children.append(self.alternative)
+
+        for fltr in self.tail_filters:
+            _children.extend(fltr.args)
+            _children.extend(fltr.kwargs.values())
+
+        return _children
+
 
 class IfExpressionParser(ExpressionParser):
     """A specialization of the built-in expression parser that handles standard filtered

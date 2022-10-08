@@ -20,7 +20,9 @@ from liquid.exceptions import LiquidSyntaxError
 from liquid.loaders import DictLoader
 from liquid.parse import get_parser
 from liquid.stream import TokenStream
+
 from liquid.template import BoundTemplate
+from liquid.template import Refs
 
 from liquid.expression import Filter
 from liquid.expression import Identifier
@@ -611,3 +613,32 @@ class IfExpressionRenderTextCase(unittest.TestCase):
 
         with self.assertRaises(LiquidSyntaxError):
             env.from_string(r"{% assign foo.bar = 'hello' %}")
+
+
+class AnalyzeIfExpressionTestCase(unittest.TestCase):
+    def test_analyze_macro_tag(self) -> None:
+        """Test that we can statically analyze macro and call tags."""
+        env = Environment()
+        env.add_tag(InlineIfStatement)
+
+        template = env.from_string(r"{{ foo | upcase if a.b else bar | append: baz }}")
+
+        expected_template_globals = {
+            "foo": [("<string>", 1)],
+            "a.b": [("<string>", 1)],
+            "bar": [("<string>", 1)],
+            "baz": [("<string>", 1)],
+        }
+        expected_template_locals: Refs = {}
+        expected_refs = {
+            "foo": [("<string>", 1)],
+            "a.b": [("<string>", 1)],
+            "bar": [("<string>", 1)],
+            "baz": [("<string>", 1)],
+        }
+
+        analysis = template.analyze()
+
+        self.assertEqual(analysis.local_variables, expected_template_locals)
+        self.assertEqual(analysis.global_variables, expected_template_globals)
+        self.assertEqual(analysis.variables, expected_refs)
