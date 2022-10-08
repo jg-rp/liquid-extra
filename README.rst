@@ -3,7 +3,7 @@
 Liquid Extra
 ============
 
-A growing collection of extra tags and filters for `Python Liquid <https://github.com/jg-rp/liquid>`_.
+A collection of extra tags and filters for `Python Liquid <https://github.com/jg-rp/liquid>`_.
 
 .. image:: https://img.shields.io/pypi/v/python-liquid-extra.svg
     :target: https://pypi.org/project/python-liquid-extra/
