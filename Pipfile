@@ -21,6 +21,7 @@ mypy = "*"
 types-python-dateutil = "*"
 types-markupsafe = "*"
 pytest = "*"
+tox = "*"
 
 [requires]
 python_version = "3.8"

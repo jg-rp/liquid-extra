@@ -4,9 +4,11 @@
 from unittest import skipIf
 
 try:
-    import markupsafe
+    import markupsafe  # pylint: disable=unused-import
+
+    MARKUPSAFE_AVAILABLE = True
 except ImportError:
-    markupsafe = None
+    MARKUPSAFE_AVAILABLE = False
 
 from liquid import Environment
 from liquid.loaders import DictLoader
@@ -24,7 +26,7 @@ from .base import RenderCase
 class StylesheetTagFilterTestCase(FilterTestCase):
     """Test the StylesheetTag template filter."""
 
-    def test_stylesheet_tag_filter(self):
+    def test_stylesheet_tag_filter(self) -> None:
         test_cases = [
             Case(
                 description="relative url",
@@ -74,7 +76,7 @@ class StylesheetTagFilterTestCase(FilterTestCase):
 class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
     """Test the StylesheetTag filter from a template."""
 
-    def test_render_stylesheet_tag_filter(self):
+    def test_render_stylesheet_tag_filter(self) -> None:
         test_cases = [
             RenderCase(
                 description="from context variable",
@@ -98,8 +100,8 @@ class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
                 result = template.render()
                 self.assertEqual(result, case.expect)
 
-    @skipIf(markupsafe is None, "this test requires markupsafe")
-    def test_render_stylesheet_tag_with_autoescape(self):
+    @skipIf(not MARKUPSAFE_AVAILABLE, "this test requires markupsafe")
+    def test_render_stylesheet_tag_with_autoescape(self) -> None:
         test_cases = [
             RenderCase(
                 description="relative url",
@@ -147,7 +149,7 @@ class RenderStylesheetTagFilterTestCase(RenderFilterTestCase):
 class ScriptTagFilterTestCase(FilterTestCase):
     """Test the ScriptTag template filter."""
 
-    def test_script_tag_filter(self):
+    def test_script_tag_filter(self) -> None:
         test_cases = [
             Case(
                 description="relative url",
@@ -184,7 +186,7 @@ class ScriptTagFilterTestCase(FilterTestCase):
 class RenderScriptTagFilterTestCase(RenderFilterTestCase):
     """Test the ScriptTag filter from a template."""
 
-    def test_render_script_tag_filter(self):
+    def test_render_script_tag_filter(self) -> None:
         test_cases = [
             RenderCase(
                 description="url from context",
@@ -209,8 +211,8 @@ class RenderScriptTagFilterTestCase(RenderFilterTestCase):
                 result = template.render()
                 self.assertEqual(result, case.expect)
 
-    @skipIf(markupsafe is None, "this test requires markupsafe")
-    def test_render_script_tag_with_autoescape(self):
+    @skipIf(not MARKUPSAFE_AVAILABLE, "this test requires markupsafe")
+    def test_render_script_tag_with_autoescape(self) -> None:
         test_cases = [
             RenderCase(
                 description="relative url",

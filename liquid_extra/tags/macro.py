@@ -220,6 +220,7 @@ class CallNode(Node):
                 continue
             if expr == NIL:
                 break
+            assert isinstance(name, str)
             args[name] = expr
 
         # NOTE: This has the potential to override a positional argument with a keyword.

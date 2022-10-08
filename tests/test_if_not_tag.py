@@ -3,9 +3,12 @@
 
 from unittest import TestCase
 
+from typing import Any
+from typing import Dict
+from typing import Iterable
 from typing import Mapping
 from typing import NamedTuple
-from typing import Any
+
 
 from liquid.context import Context
 from liquid.environment import Environment
@@ -70,7 +73,7 @@ class ParserCase(NamedTuple):
 
 class EvalCase(NamedTuple):
     description: str
-    context: Mapping
+    context: Mapping[str, Any]
     expression: str
     expect: Any
 
@@ -80,11 +83,11 @@ class RenderCase(NamedTuple):
     template: str
     expect: str
     globals: Mapping[str, Any] = {}
-    partials: Mapping[str, Any] = {}
+    partials: Dict[str, str] = {}
 
 
 class BooleanLexerTestCase(TestCase):
-    def test_lex_boolean_expression(self):
+    def test_lex_boolean_expression(self) -> None:
         """Test that we can tokenize comparison expressions."""
         test_cases = [
             LexerCase(
@@ -255,7 +258,12 @@ class BooleanLexerTestCase(TestCase):
 class BooleanExpressionParserTestCase(TestCase):
     """Liquid expression parser test cases."""
 
-    def _test(self, test_cases, lex_func, parse_func):
+    def _test(
+        self,
+        test_cases: Iterable[ParserCase],
+        lex_func: Any,
+        parse_func: Any,
+    ) -> None:
         """Helper method for testing lists of Cases."""
 
         for case in test_cases:
@@ -264,7 +272,7 @@ class BooleanExpressionParserTestCase(TestCase):
                 expr = parse_func(tokens)
                 self.assertEqual(expr, case.expect)
 
-    def test_parse_boolean_expression(self):
+    def test_parse_boolean_expression(self) -> None:
         """Test that we can parse boolean expressions."""
         test_cases = [
             ParserCase(
@@ -534,7 +542,12 @@ class BooleanExpressionParserTestCase(TestCase):
 class BooleanExpressionEvalTestCase(TestCase):
     """Boolean expression evaluator test cases."""
 
-    def _test(self, test_cases, lex_func, parse_func):
+    def _test(
+        self,
+        test_cases: Iterable[EvalCase],
+        lex_func: Any,
+        parse_func: Any,
+    ) -> None:
         """Utility method for evaluating lists of test cases."""
         env = Environment()
 
@@ -546,7 +559,7 @@ class BooleanExpressionEvalTestCase(TestCase):
                 res = expr.evaluate(context)
                 self.assertEqual(res, case.expect)
 
-    def test_eval_boolean_expression(self):
+    def test_eval_boolean_expression(self) -> None:
         """Test that we can evaluate boolean expressions."""
         test_cases = [
             EvalCase(
@@ -851,7 +864,7 @@ class BooleanExpressionEvalTestCase(TestCase):
 class BooleanRenderTestCases(TestCase):
     """Test cases for testing template renders."""
 
-    def _test(self, test_cases):
+    def _test(self, test_cases: Iterable[RenderCase]) -> None:
         """Helper method for testing lists of test cases."""
         for case in test_cases:
             env = Environment(loader=DictLoader(case.partials))
@@ -863,7 +876,7 @@ class BooleanRenderTestCases(TestCase):
                 result = template.render()
                 self.assertEqual(result, case.expect)
 
-    def test_if_not_tag(self):
+    def test_if_not_tag(self) -> None:
         """Test that we can render `if` tags."""
         test_cases = [
             RenderCase(
@@ -1056,7 +1069,7 @@ class BooleanRenderTestCases(TestCase):
 
         self._test(test_cases)
 
-    def test_golden_if(self):
+    def test_golden_if(self) -> None:
         """Test liquid's golden test cases."""
         for case in golden_cases:
             env = Environment(

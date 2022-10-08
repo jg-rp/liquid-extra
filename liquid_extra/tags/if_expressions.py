@@ -169,9 +169,11 @@ class FilteredIfExpression(FilteredExpression):
             f"filters={self.filters})"
         )
 
-    # pylint: disable=no-self-use
     def _apply_filters(
-        self, result: object, filters: List[Filter], context: Context
+        self,
+        result: object,
+        filters: List[Filter],
+        context: Context,
     ) -> object:
         for fltr in filters:
             try:

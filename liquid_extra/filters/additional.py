@@ -15,7 +15,7 @@ from liquid import Environment
 from liquid import Context
 
 
-class JSON:
+class JSON:  # pylint: disable=too-few-public-methods
     """Serialize objects as a JSON (JavaScript Object Notation) formatted string.
 
     Args:
@@ -35,7 +35,7 @@ class JSON:
 
 @with_context
 @with_environment
-class Translate:
+class Translate:  # pylint: disable=too-few-public-methods
     """Replace translation keys with strings for the current locale.
 
     Tries to read the locale from the current template context, falling back to

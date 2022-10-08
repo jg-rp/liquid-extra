@@ -1,6 +1,9 @@
 """Test cases for the `json` filter."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
 
+from typing import Any
+from typing import Dict
+
 from dataclasses import dataclass
 from dataclasses import is_dataclass
 from dataclasses import asdict
@@ -24,7 +27,7 @@ class MockData:
 class JSONFilterTestCase(FilterTestCase):
     """Test the JSON template filter."""
 
-    def test_json_filter(self):
+    def test_json_filter(self) -> None:
         test_cases = [
             Case(
                 description="serialize a string",
@@ -59,7 +62,7 @@ class JSONFilterTestCase(FilterTestCase):
         self.env.add_filter(JSON.name, JSON())
         self._test(self.ctx.filter(JSON.name), test_cases)
 
-    def test_json_with_encoder_func(self):
+    def test_json_with_encoder_func(self) -> None:
         test_cases = [
             Case(
                 description="serialize a dataclass",
@@ -77,7 +80,7 @@ class JSONFilterTestCase(FilterTestCase):
             ),
         ]
 
-        def default(obj):
+        def default(obj: object) -> Dict[str, Any]:
             if is_dataclass(obj):
                 return asdict(obj)
             raise TypeError(f"can't serialize object {obj}")
@@ -89,7 +92,7 @@ class JSONFilterTestCase(FilterTestCase):
 class RenderJSONFilterTestCase(RenderFilterTestCase):
     """Test the JSON filter from a template."""
 
-    def test_render_json_filter(self):
+    def test_render_json_filter(self) -> None:
         test_cases = [
             RenderCase(
                 description="render a string literal as JSON",
@@ -109,7 +112,7 @@ class RenderJSONFilterTestCase(RenderFilterTestCase):
 
         self._test(JSON(), test_cases)
 
-    def test_render_json_with_encoder_func(self):
+    def test_render_json_with_encoder_func(self) -> None:
         test_cases = [
             RenderCase(
                 description="render an arbitrary object as JSON",
@@ -127,7 +130,7 @@ class RenderJSONFilterTestCase(RenderFilterTestCase):
             ),
         ]
 
-        def default(obj):
+        def default(obj: object) -> Dict[str, Any]:
             if is_dataclass(obj):
                 return asdict(obj)
             raise TypeError(f"can't serialize object {obj}")

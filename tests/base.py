@@ -9,7 +9,6 @@ from typing import Any
 from typing import List
 from typing import Dict
 from typing import Iterable
-from typing import Callable
 from typing import Mapping
 from typing import Union
 from typing import Type
@@ -37,11 +36,11 @@ class RenderCase(NamedTuple):
 
 
 class FilterTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.env = Environment()
         self.ctx = Context(self.env)
 
-    def _test(self, filter_: Callable, test_cases: Iterable[Case]):
+    def _test(self, filter_: Any, test_cases: Iterable[Case]) -> None:
         for case in test_cases:
             with self.subTest(msg=case.description):
                 if isclass(case.expect) and issubclass(case.expect, Exception):
@@ -54,10 +53,10 @@ class FilterTestCase(unittest.TestCase):
 
 
 class RenderFilterTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.env = Environment()
 
-    def _test(self, filter_: Callable[..., Any], test_cases: Iterable[RenderCase]):
+    def _test(self, filter_: Any, test_cases: Iterable[RenderCase]) -> None:
         for case in test_cases:
             self.env.loader = DictLoader(case.partials)
             self.env.add_filter(filter_.name, filter_)

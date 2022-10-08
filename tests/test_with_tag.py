@@ -9,6 +9,7 @@ from typing import Dict
 from unittest import TestCase
 
 from liquid import Environment
+from liquid.template import Refs
 
 from liquid_extra.tags import WithTag
 
@@ -24,7 +25,7 @@ class Case:
 
 
 class RenderWithTagTestCase(TestCase):
-    def test_render_with_tag(self):
+    def test_render_with_tag(self) -> None:
         """Test that we can render a `with` tag."""
         test_cases = [
             Case(
@@ -65,7 +66,7 @@ class RenderWithTagTestCase(TestCase):
 
 
 class AnalyzeWithTestCase(TestCase):
-    def test_analyze_macro_tag(self):
+    def test_analyze_macro_tag(self) -> None:
         """Test that we can statically analyze macro and call tags."""
         env = Environment()
         env.add_tag(WithTag)
@@ -83,7 +84,7 @@ class AnalyzeWithTestCase(TestCase):
             "p.title": [("<string>", 1)],
             "collection.products.first.title": [("<string>", 1)],
         }
-        expected_template_locals = {}
+        expected_template_locals: Refs = {}
         expected_refs = {
             "collection.products.first": [("<string>", 1)],
             "collection.products.first.title": [("<string>", 1)],

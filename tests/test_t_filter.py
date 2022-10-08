@@ -42,7 +42,7 @@ mock_locales = {
 class TranslateFilterTestCase(FilterTestCase):
     """Test the Translate template filter."""
 
-    def test_translate_filter(self):
+    def test_translate_filter(self) -> None:
         test_cases = [
             Case(
                 description="default locale",
@@ -77,7 +77,7 @@ class TranslateFilterTestCase(FilterTestCase):
         self.env.add_filter(Translate.name, Translate(locales=mock_locales))
         self._test(self.ctx.filter(Translate.name), test_cases)
 
-    def test_translate_filter_with_locale(self):
+    def test_translate_filter_with_locale(self) -> None:
         test_cases = [
             Case(
                 description="de locale",
@@ -117,7 +117,7 @@ class TranslateFilterTestCase(FilterTestCase):
 class RenderTranslateFilterTestCase(RenderFilterTestCase):
     """Test the Translate filter from a template."""
 
-    def test_render_translate_filter(self):
+    def test_render_translate_filter(self) -> None:
         test_cases = [
             RenderCase(
                 description="default locale",

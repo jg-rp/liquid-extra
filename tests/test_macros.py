@@ -41,7 +41,7 @@ class RenderCase(NamedTuple):
 
 
 class MacroLexerTestCase(TestCase):
-    def test_lex_macro_expression(self):
+    def test_lex_macro_expression(self) -> None:
         """Test that we can tokenize `macro` tags."""
         test_cases = [
             LexerCase(
@@ -99,7 +99,7 @@ class MacroLexerTestCase(TestCase):
 
 
 class MacroRenderTestCase(TestCase):
-    def test_render_macro(self):
+    def test_render_macro(self) -> None:
         """Test that we can render `macro` and `call` tags."""
         test_cases = [
             RenderCase(
@@ -249,7 +249,7 @@ class MacroRenderTestCase(TestCase):
                 result = template.render()
                 self.assertEqual(result, case.expect)
 
-    def test_render_macro_strict_undefined(self):
+    def test_render_macro_strict_undefined(self) -> None:
         """Test that missing arguments and undefined macros are `Undefined`."""
         test_cases = [
             RenderCase(
@@ -288,7 +288,7 @@ class MacroRenderTestCase(TestCase):
                     template.render()
                 self.assertEqual(case.expect, str(raised.exception))
 
-    def test_render_macro_async(self):
+    def test_render_macro_async(self) -> None:
         """Test that we can render a macro asynchronously."""
         env = Environment()
         env.add_tag(MacroTag)
@@ -303,7 +303,7 @@ class MacroRenderTestCase(TestCase):
             r"{% call 'nosuchthing' %}"
         )
 
-        async def coro():
+        async def coro() -> str:
             return await template.render_async()
 
         result = asyncio.run(coro())
@@ -311,7 +311,7 @@ class MacroRenderTestCase(TestCase):
 
 
 class AnalyzeMacroTestCase(TestCase):
-    def test_analyze_macro_tag(self):
+    def test_analyze_macro_tag(self) -> None:
         """Test that we can statically analyze macro and call tags."""
         env = Environment()
         env.add_tag(MacroTag)

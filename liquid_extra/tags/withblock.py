@@ -138,7 +138,6 @@ class WithTag(Tag):
 
         return WithNode(tok=tok, args=args, block=block)
 
-    # pylint: disable=no-self-use
     def parse_argument(self, stream: TokenStream) -> WithKeywordArg:
         """Parse a keyword argument from a stream of tokens."""
         key = str(parse_unchained_identifier(stream))

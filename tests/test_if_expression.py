@@ -59,7 +59,7 @@ class ParserCase(NamedTuple):
 
 class EvalCase(NamedTuple):
     description: str
-    context: Mapping
+    context: Mapping[str, Any]
     expression: str
     expect: Any
 
@@ -75,7 +75,7 @@ class RenderCase(NamedTuple):
 class IfExpressionLexerTestCase(unittest.TestCase):
     """If expression lexer test case."""
 
-    def test_lex_if_expression(self):
+    def test_lex_if_expression(self) -> None:
         """Test that we can tokenize inline `if` expressions."""
         test_cases = [
             LexerCase(
@@ -153,7 +153,7 @@ class IfExpressionLexerTestCase(unittest.TestCase):
 class IfExpressionParserTestCase(unittest.TestCase):
     """If expression parser test case."""
 
-    def test_parse_inline_if_expression(self):
+    def test_parse_inline_if_expression(self) -> None:
         """Test that we can parse inline `if` expressions."""
         test_cases = [
             ParserCase(
@@ -232,7 +232,7 @@ class IfExpressionParserTestCase(unittest.TestCase):
                 expr = parser.parse_filtered_if_expression(tokens)
                 self.assertEqual(expr, case.expect)
 
-    def test_if_expression_string(self):
+    def test_if_expression_string(self) -> None:
         """Test the string representation of an inline `if` expression."""
         tokens = TokenStream(
             tokenize_if_expression("'hello' | downcase if true else 'goodbye' | upcase")
@@ -246,7 +246,7 @@ class IfExpressionParserTestCase(unittest.TestCase):
 class IfExpressionEvalTestCase(unittest.TestCase):
     """If expression evaluation test case."""
 
-    def test_evaluate_inline_if_expression(self):
+    def test_evaluate_inline_if_expression(self) -> None:
         """Test that we correctly evaluate inline `if` expressions."""
         env = Environment()
 
@@ -313,7 +313,7 @@ class IfExpressionEvalTestCase(unittest.TestCase):
 class IfExpressionRenderTextCase(unittest.TestCase):
     """If expression render test case."""
 
-    def test_render_statement_inline_if_expression(self):
+    def test_render_statement_inline_if_expression(self) -> None:
         """Test that we correctly render output statements that use inline `if`."""
         test_cases = [
             RenderCase(
@@ -372,7 +372,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
 
         # Same again using async path.
 
-        async def coro(template):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         for case in test_cases:
@@ -385,7 +385,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
                 result = asyncio.run(coro(template))
                 self.assertEqual(result, case.expect)
 
-    def test_render_assign_inline_if_expression(self):
+    def test_render_assign_inline_if_expression(self) -> None:
         """Test that we correctly render assignment expressions that use inline `if`."""
         test_cases = [
             RenderCase(
@@ -446,7 +446,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
 
         # Same again using async path.
 
-        async def coro(template):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         for case in test_cases:
@@ -458,7 +458,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
                 result = asyncio.run(coro(template))
                 self.assertEqual(result, case.expect)
 
-    def test_render_echo_inline_if_expression(self):
+    def test_render_echo_inline_if_expression(self) -> None:
         """Test that we correctly render echo expressions that use inline `if`."""
         test_cases = [
             RenderCase(
@@ -516,7 +516,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
 
         # Same again using async path.
 
-        async def coro(template):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         for case in test_cases:
@@ -528,7 +528,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
                 result = asyncio.run(coro(template))
                 self.assertEqual(result, case.expect)
 
-    def test_unknown_filter(self):
+    def test_unknown_filter(self) -> None:
         """Test that unknown filters are handled properly."""
         env = Environment(strict_filters=True)
         env.add_tag(InlineIfStatement)
@@ -539,7 +539,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
             template.render()
 
         # and render async
-        async def coro(template: BoundTemplate):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         with self.assertRaises(NoSuchFilterFunc):
@@ -549,7 +549,7 @@ class IfExpressionRenderTextCase(unittest.TestCase):
         self.assertEqual(template.render(), "hello")
         self.assertEqual(asyncio.run(coro(template)), "hello")
 
-    def test_filter_value_error(self):
+    def test_filter_value_error(self) -> None:
         """Test unexpected filter values."""
         env = Environment()
         env.add_tag(InlineIfStatement)
@@ -559,12 +559,12 @@ class IfExpressionRenderTextCase(unittest.TestCase):
         self.assertEqual(template.render(), "")
 
         # and render async
-        async def coro(template: BoundTemplate):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         self.assertEqual(asyncio.run(coro(template)), "")
 
-    def test_filter_argument_error(self):
+    def test_filter_argument_error(self) -> None:
         """Test unexpected filter arguments."""
         env = Environment()
         env.add_tag(InlineIfStatement)
@@ -575,18 +575,18 @@ class IfExpressionRenderTextCase(unittest.TestCase):
             template.render()
 
         # and render async
-        async def coro(template: BoundTemplate):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         with self.assertRaises(FilterArgumentError):
             asyncio.run(coro(template))
 
-    def test_unexpected_filter_exception(self):
+    def test_unexpected_filter_exception(self) -> None:
         """Test unexpected filter exception."""
         env = Environment()
         env.add_tag(InlineIfStatement)
 
-        def func():
+        def func() -> None:
             raise Exception(":(")
 
         env.add_filter("func", func)
@@ -597,13 +597,13 @@ class IfExpressionRenderTextCase(unittest.TestCase):
             template.render()
 
         # and render async
-        async def coro(template: BoundTemplate):
+        async def coro(template: BoundTemplate) -> str:
             return await template.render_async()
 
         with self.assertRaises(Error):
             asyncio.run(coro(template))
 
-    def test_assign_expression_syntax_error(self):
+    def test_assign_expression_syntax_error(self) -> None:
         """Test that we handle syntax errors in `assign` expressions using inline
         `if`."""
         env = Environment()
