@@ -5,23 +5,23 @@ Liquid Extra
 
 A collection of extra tags and filters for `Python Liquid <https://github.com/jg-rp/liquid>`_.
 
-.. image:: https://img.shields.io/pypi/v/python-liquid-extra.svg
+.. image:: https://img.shields.io/pypi/v/python-liquid-extra?style=flat-square
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Version
 
-.. image:: https://github.com/jg-rp/liquid-extra/actions/workflows/tests.yaml/badge.svg
+.. image:: https://img.shields.io/github/workflow/status/jg-rp/liquid-extra/Tests/main?label=tests&style=flat-square
     :target: https://github.com/jg-rp/liquid-extra/tree/main/tests
     :alt: Tests
 
-.. image:: https://img.shields.io/pypi/l/python-liquid-extra.svg
+.. image:: https://img.shields.io/pypi/l/python-liquid-extra.svg?style=flat-square
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Licence
 
-.. image:: https://img.shields.io/pypi/pyversions/python-liquid-extra.svg
+.. image:: https://img.shields.io/pypi/pyversions/python-liquid-extra.svg?style=flat-square
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Python versions
 
-.. image:: https://img.shields.io/badge/pypy-3.7%20%7C%203.8-blue
+.. image:: https://img.shields.io/badge/pypy-3.7%20%7C%203.8-blue?style=flat-square
     :target: https://pypi.org/project/python-liquid/
     :alt: PyPy versions
 
