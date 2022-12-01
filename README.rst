@@ -25,6 +25,8 @@ A collection of extra tags and filters for `Python Liquid <https://github.com/jg
     :target: https://pypi.org/project/python-liquid/
     :alt: PyPy versions
 
+Notice
+------
 
 **Extra tags and filters are now included in Python Liquid. Wherever possible, you
 should use extra tags and filters included in Python Liquid over those found here.
