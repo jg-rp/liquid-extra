@@ -616,8 +616,8 @@ class IfExpressionRenderTextCase(unittest.TestCase):
 
 
 class AnalyzeIfExpressionTestCase(unittest.TestCase):
-    def test_analyze_macro_tag(self) -> None:
-        """Test that we can statically analyze macro and call tags."""
+    def test_analyze_if_expression(self) -> None:
+        """Test that we can statically analyze inline conditional expression."""
         env = Environment()
         env.add_tag(InlineIfStatement)
 

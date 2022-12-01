@@ -26,6 +26,13 @@ A collection of extra tags and filters for `Python Liquid <https://github.com/jg
     :alt: PyPy versions
 
 
+**Extra tags and filters are now included in Python Liquid. Wherever possible, you
+should use extra tags and filters included in Python Liquid over those found here.
+See https://jg-rp.github.io/liquid/extra/introduction.**
+
+**Python Liquid Extra will continue to be maintained and is expected to work with
+Python Liquid up to, but not including, version 2.0.0 (unreleased).**
+
 Installing
 ----------
 
@@ -44,7 +51,6 @@ Or `pip <https://pip.pypa.io/en/stable/getting-started/>`_:
 Links
 -----
 
-- Documentation: https://jg-rp.github.io/liquid/extra/introduction
 - Change Log: https://github.com/jg-rp/liquid-extra/blob/main/CHANGES.rst
 - PyPi: https://pypi.org/project/python-liquid-extra/
 - Source Code: https://github.com/jg-rp/liquid-extra
