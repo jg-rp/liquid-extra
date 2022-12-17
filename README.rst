@@ -9,7 +9,7 @@ A collection of extra tags and filters for `Python Liquid <https://github.com/jg
     :target: https://pypi.org/project/python-liquid-extra/
     :alt: Version
 
-.. image:: https://img.shields.io/github/workflow/status/jg-rp/liquid-extra/Tests/main?label=tests&style=flat-square
+.. image:: https://img.shields.io/github/actions/workflow/status/jg-rp/liquid-extra/tests.yaml?branch=main&label=tests&style=flat-square
     :target: https://github.com/jg-rp/liquid-extra/tree/main/tests
     :alt: Tests
 
